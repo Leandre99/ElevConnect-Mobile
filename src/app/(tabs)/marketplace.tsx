@@ -331,7 +331,7 @@ export default function MarketplaceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -347,15 +347,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   marketTabs: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#F1F5F9',
     borderRadius: 10,
     padding: 2,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   mktTab: {
     paddingHorizontal: 12,
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   mktTabText: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#64748B',
     fontWeight: '700',
   },
   mktTabTextActive: {
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   sectionSubtitle: {
     fontSize: 13,
@@ -400,11 +400,16 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   itemCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   itemCardTop: {
     flexDirection: 'row',
@@ -415,9 +420,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   iconText: {
     fontSize: 24,
@@ -429,7 +436,7 @@ const styles = StyleSheet.create({
   itemBreed: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   itemQty: {
     fontSize: 12,
@@ -443,12 +450,12 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
     marginTop: 14,
   },
   itemDesc: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#475569',
     marginTop: 6,
     lineHeight: 18,
   },
@@ -458,7 +465,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    borderTopColor: '#F1F5F9',
   },
   metaRow: {
     flexDirection: 'row',
@@ -493,11 +500,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   matureCardLeft: {
     flexDirection: 'row',
@@ -510,7 +522,7 @@ const styles = StyleSheet.create({
   matureBreed: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   matureMeta: {
     fontSize: 12,
@@ -529,11 +541,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   previewBox: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   previewText: {
     color: '#10B981',
@@ -543,11 +555,11 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -562,7 +574,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   modalForm: {
     gap: 16,
@@ -574,16 +586,16 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   formInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   formTextarea: {
     height: 80,
@@ -605,8 +617,10 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     gap: 8,
   },
   emptyText: {

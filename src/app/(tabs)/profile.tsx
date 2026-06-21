@@ -250,7 +250,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -266,15 +266,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnLogout: {
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -285,18 +287,23 @@ const styles = StyleSheet.create({
   profileCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     gap: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   avatarContainer: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -312,7 +319,7 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   profileRole: {
     fontSize: 13,
@@ -325,11 +332,16 @@ const styles = StyleSheet.create({
   },
   statsBar: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   statBox: {
     flex: 1,
@@ -350,18 +362,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   invoicesList: {
     gap: 14,
   },
   invoiceCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   invoiceCardTop: {
     flexDirection: 'row',
@@ -376,7 +393,7 @@ const styles = StyleSheet.create({
   invoiceRef: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   invoiceDate: {
     fontSize: 11,
@@ -389,7 +406,7 @@ const styles = StyleSheet.create({
   },
   invoiceDesc: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#475569',
     lineHeight: 18,
   },
   btnPay: {
@@ -411,8 +428,10 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   emptyText: {
     color: '#64748B',
@@ -420,17 +439,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   optionsContainer: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   optionsTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   optionRow: {
     flexDirection: 'row',
@@ -446,7 +470,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   optionRight: {
     fontSize: 12,
@@ -455,11 +479,11 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -474,7 +498,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   checkoutForm: {
     gap: 16,
@@ -482,7 +506,7 @@ const styles = StyleSheet.create({
   },
   creditCard: {
     height: 180,
-    backgroundColor: '#059669', // Emerald 600 dark green card
+    backgroundColor: '#059669', 
     borderRadius: 16,
     padding: 20,
     justifyContent: 'space-between',
@@ -527,11 +551,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   billingSummary: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   billLabel: {
     fontSize: 12,
@@ -545,7 +569,7 @@ const styles = StyleSheet.create({
   },
   billDesc: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#475569',
     marginTop: 6,
   },
   formGroup: {
@@ -554,16 +578,16 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   formInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   formRow: {
     flexDirection: 'row',
@@ -587,7 +611,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   loadingText: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 12,
   },
 });

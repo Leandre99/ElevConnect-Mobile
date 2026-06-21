@@ -620,7 +620,7 @@ export default function AlertsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -636,17 +636,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnNewAlert: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#EF4444', // Red 500
+    backgroundColor: '#10B981', // Emerald for new alert instead of red to make it positive
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
-    shadowColor: '#EF4444',
+    shadowColor: '#10B981',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -665,17 +665,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   alertsContainer: {
     gap: 16,
   },
   alertCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   alertCardTop: {
     flexDirection: 'row',
@@ -683,12 +688,15 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   alertCardInfo: {
+    flex: 1,
+    marginRight: 10,
     gap: 2,
   },
   alertCardBreed: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
+    flexShrink: 1,
   },
   alertCardFarm: {
     fontSize: 12,
@@ -711,7 +719,7 @@ const styles = StyleSheet.create({
   },
   alertCardDesc: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#475569',
     marginTop: 10,
     lineHeight: 18,
   },
@@ -719,7 +727,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    backgroundColor: 'rgba(139, 92, 246, 0.1)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -738,7 +746,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    borderTopColor: '#F1F5F9',
   },
   priorityTag: {
     paddingHorizontal: 8,
@@ -756,11 +764,11 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -775,7 +783,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   modalForm: {
     gap: 16,
@@ -787,36 +795,36 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   formInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   formTextarea: {
     height: 80,
     textAlignVertical: 'top',
   },
   selectChip: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F1F5F9',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   selectChipActive: {
     backgroundColor: '#10B981',
     borderColor: '#10B981',
   },
   selectChipText: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 13,
     fontWeight: '600',
   },
@@ -830,12 +838,12 @@ const styles = StyleSheet.create({
   },
   prioBtn: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   prioBtnText: {
     fontSize: 11,
@@ -875,11 +883,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   aiResultBox: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   aiResultTitle: {
     fontSize: 12,
@@ -889,7 +897,7 @@ const styles = StyleSheet.create({
   },
   aiResultText: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#475569',
     lineHeight: 18,
   },
   btnSubmit: {
@@ -913,7 +921,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+    borderBottomColor: '#F1F5F9',
   },
   detailLabel: {
     fontSize: 13,
@@ -922,7 +930,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '700',
   },
   detailBlock: {
@@ -930,9 +938,9 @@ const styles = StyleSheet.create({
   },
   detailDesc: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: '#475569',
     lineHeight: 20,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     padding: 12,
     borderRadius: 10,
   },
@@ -941,22 +949,22 @@ const styles = StyleSheet.create({
   },
   mockPhoto: {
     height: 120,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   mockPhotoText: {
     fontSize: 11,
-    color: '#475569',
+    color: '#64748B',
   },
   scheduledCallBanner: {
-    backgroundColor: 'rgba(139, 92, 246, 0.08)',
+    backgroundColor: 'rgba(139, 92, 246, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(139, 92, 246, 0.25)',
+    borderColor: 'rgba(139, 92, 246, 0.2)',
     borderRadius: 16,
     padding: 16,
     gap: 8,
@@ -973,7 +981,7 @@ const styles = StyleSheet.create({
   },
   scheduledCallDate: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '600',
   },
   btnJoinCall: {
@@ -989,9 +997,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   diagnosticResultCard: {
-    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    backgroundColor: 'rgba(16, 185, 129, 0.05)',
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.25)',
+    borderColor: 'rgba(16, 185, 129, 0.2)',
     borderRadius: 16,
     padding: 16,
     gap: 12,
@@ -1019,17 +1027,19 @@ const styles = StyleSheet.create({
   },
   diagValue: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '600',
   },
   prescriptionText: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     lineHeight: 18,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#FFFFFF',
     padding: 12,
     borderRadius: 10,
     alignSelf: 'stretch',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   vetActions: {
     flexDirection: 'row',
@@ -1068,7 +1078,7 @@ const styles = StyleSheet.create({
   },
   callContainer: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0F172A', // Video call background stays dark
     justifyContent: 'space-between',
   },
   mainVideoFrame: {
@@ -1088,7 +1098,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   videoTextSub: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 13,
   },
   drawPoint: {

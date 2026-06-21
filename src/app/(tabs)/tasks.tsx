@@ -215,7 +215,7 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   dayStripContainer: {
     flexDirection: 'row',
@@ -240,13 +240,16 @@ const styles = StyleSheet.create({
     width: (width - 32 - 12 * 6) / 7,
     height: 64,
     borderRadius: 12,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   dayCardActive: {
     backgroundColor: '#10B981',
+    borderColor: '#10B981',
   },
   dayName: {
     fontSize: 11,
@@ -256,7 +259,7 @@ const styles = StyleSheet.create({
   dayNum: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
     marginTop: 4,
   },
   dayTextActive: {
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#10B981',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -276,12 +279,17 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   progressCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   progressTextRow: {
     flexDirection: 'row',
@@ -291,11 +299,11 @@ const styles = StyleSheet.create({
   progressCardTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   progressCardSub: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#475569',
     marginTop: 4,
   },
   progressPercentageText: {
@@ -305,7 +313,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 10,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F1F5F9',
     borderRadius: 5,
     overflow: 'hidden',
   },
@@ -317,19 +325,24 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
     marginTop: 10,
   },
   maturationTimelineDeck: {
     gap: 12,
   },
   maturationCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.04)',
+    borderColor: '#E2E8F0',
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   maturationHeader: {
     flexDirection: 'row',
@@ -339,7 +352,7 @@ const styles = StyleSheet.create({
   maturationTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   maturationFarm: {
     fontSize: 11,
@@ -348,12 +361,12 @@ const styles = StyleSheet.create({
   },
   maturationDays: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#475569',
     fontWeight: '600',
   },
   maturationBarBg: {
     height: 6,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F1F5F9',
     borderRadius: 3,
     overflow: 'hidden',
     marginVertical: 4,
@@ -379,7 +392,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   readyBadge: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 5,
@@ -397,9 +410,11 @@ const styles = StyleSheet.create({
   },
   taskTabs: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#F1F5F9',
     borderRadius: 10,
     padding: 2,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   taskTabButton: {
     paddingHorizontal: 12,
@@ -411,7 +426,7 @@ const styles = StyleSheet.create({
   },
   taskTabBtnText: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#64748B',
     fontWeight: '600',
   },
   taskTabBtnTextActive: {
@@ -424,11 +439,16 @@ const styles = StyleSheet.create({
   taskItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   taskCheckbox: {
     width: 22,
@@ -459,11 +479,11 @@ const styles = StyleSheet.create({
   taskName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   taskSub: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#475569',
   },
   taskFarmLabel: {
     fontSize: 11,
@@ -477,7 +497,7 @@ const styles = StyleSheet.create({
   taskQty: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   taskTime: {
     fontSize: 11,
@@ -487,8 +507,10 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     gap: 8,
   },
   emptyText: {
