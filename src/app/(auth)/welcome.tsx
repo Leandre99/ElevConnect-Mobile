@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useApp } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming, 
+  withRepeat, 
+  withSequence,
+  FadeInDown
+} from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 
@@ -11,32 +19,55 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const { userRole, setUserRole } = useApp();
 
+  const pulseAnim = useSharedValue(1);
+  const pulseAnim2 = useSharedValue(1);
+
+  useEffect(() => {
+    pulseAnim.value = withRepeat(
+      withSequence(withTiming(1.05, { duration: 2000 }), withTiming(0.95, { duration: 2000 })),
+      -1,
+      true
+    );
+    pulseAnim2.value = withRepeat(
+      withSequence(withTiming(1.1, { duration: 3000 }), withTiming(0.9, { duration: 3000 })),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedCircle1 = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseAnim.value }]
+  }));
+  const animatedCircle2 = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseAnim2.value }]
+  }));
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       
       {/* Decorative backdrop shapes */}
-      <View style={[styles.circle, styles.circle1]} />
-      <View style={[styles.circle, styles.circle2]} />
+      <Animated.View style={[styles.circle, styles.circle1, animatedCircle1]} />
+      <Animated.View style={[styles.circle, styles.circle2, animatedCircle2]} />
 
       <SafeAreaView style={styles.safeArea}>
         {/* Brand Header */}
-        <View style={styles.header}>
+        <Animated.View style={styles.header} entering={FadeInDown.duration(800).springify()}>
           <Text style={styles.brandTitle}>Elev<Text style={styles.brandAccent}>Connect</Text></Text>
           <Text style={styles.brandSubtitle}>Élevage intelligent & Télémédecine vétérinaire</Text>
-        </View>
+        </Animated.View>
 
         {/* Hero Illustration Placeholder (Styled shapes) */}
-        <View style={styles.heroSection}>
+        <Animated.View style={styles.heroSection} entering={FadeInDown.delay(200).duration(800).springify()}>
           <View style={styles.heroCard}>
             <Text style={styles.heroText}>🎯</Text>
             <Text style={styles.heroHeading}>Gérez vos exploitations n'importe où</Text>
             <Text style={styles.heroSub}>Suivi de croissance, rapports de santé automatisés et connexion instantanée avec votre vétérinaire.</Text>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Role Selection */}
-        <View style={styles.roleContainer}>
+        <Animated.View style={styles.roleContainer} entering={FadeInDown.delay(400).duration(800).springify()}>
           <Text style={styles.sectionTitle}>Choisissez votre profil :</Text>
           <View style={styles.roleButtons}>
             <TouchableOpacity 
@@ -65,10 +96,10 @@ export default function WelcomeScreen() {
               <Text style={styles.roleDesc}>Soignez & diagnostiquez</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Bottom Actions */}
-        <View style={styles.actionContainer}>
+        <Animated.View style={styles.actionContainer} entering={FadeInDown.delay(600).duration(800).springify()}>
           <TouchableOpacity 
             style={styles.btnPrimary} 
             onPress={() => router.push('/(auth)/login')}
@@ -84,7 +115,7 @@ export default function WelcomeScreen() {
           >
             <Text style={styles.btnSecondaryText}>Créer un compte</Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       </SafeAreaView>
     </View>
   );
