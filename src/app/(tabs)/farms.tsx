@@ -423,7 +423,7 @@ export default function FarmsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#0F172A',
   },
   safeArea: {
     flex: 1,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   btnAddFarm: {
     flexDirection: 'row',
@@ -449,10 +449,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
-    shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
   },
   btnAddFarmText: {
     color: '#FFFFFF',
@@ -478,19 +474,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#1E293B',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   farmDeckCardActive: {
     backgroundColor: '#10B981',
     borderColor: '#10B981',
   },
   farmDeckCardText: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 14,
     fontWeight: '700',
   },
@@ -498,17 +494,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   farmDetailsCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
     gap: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   farmDetailsHeader: {
     flexDirection: 'row',
@@ -518,7 +509,7 @@ const styles = StyleSheet.create({
   farmDetailsName: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   badgeActive: {
     backgroundColor: 'rgba(16, 185, 129, 0.15)',
@@ -533,7 +524,7 @@ const styles = StyleSheet.create({
   },
   farmDetailsDesc: {
     fontSize: 13,
-    color: '#475569',
+    color: '#94A3B8',
     lineHeight: 18,
   },
   farmDetailsMeta: {
@@ -556,7 +547,7 @@ const styles = StyleSheet.create({
   animalsSectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   btnAddAnimal: {
     flexDirection: 'row',
@@ -578,16 +569,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   animalCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   animalCardHeader: {
     flexDirection: 'row',
@@ -605,7 +591,7 @@ const styles = StyleSheet.create({
   animalBreed: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   animalSpecies: {
     fontSize: 12,
@@ -618,21 +604,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modeLot: {
-    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    backgroundColor: 'rgba(59, 130, 246, 0.15)',
   },
   modeIndiv: {
-    backgroundColor: 'rgba(148, 163, 184, 0.1)',
+    backgroundColor: 'rgba(148, 163, 184, 0.15)',
   },
   animalModeText: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#3B82F6', 
+    color: '#3B82F6', // gets overridden
   },
   animalStatsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: 'rgba(15, 23, 42, 0.3)',
     borderRadius: 12,
     padding: 12,
   },
@@ -649,18 +635,18 @@ const styles = StyleSheet.create({
   animalStatValue: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#FFFFFF',
     marginTop: 4,
   },
   lotControls: {
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
   },
   lotControlsTitle: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#94A3B8',
     fontWeight: '600',
     marginBottom: 10,
   },
@@ -670,15 +656,15 @@ const styles = StyleSheet.create({
   },
   lossBtn: {
     flex: 1,
-    backgroundColor: 'rgba(239, 68, 68, 0.05)',
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(239, 68, 68, 0.2)',
+    borderColor: 'rgba(239, 68, 68, 0.3)',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
   },
   lossBtn5: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    backgroundColor: 'rgba(239, 68, 68, 0.2)',
   },
   lossBtnText: {
     color: '#EF4444',
@@ -689,10 +675,10 @@ const styles = StyleSheet.create({
     padding: 40,
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.03)',
   },
   emptyText: {
     color: '#64748B',
@@ -701,11 +687,11 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.4)',
+    backgroundColor: 'rgba(15, 23, 42, 0.85)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -720,7 +706,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   modalForm: {
     gap: 16,
@@ -732,16 +718,16 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#475569',
+    color: '#94A3B8',
   },
   formInput: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#0F172A',
     borderRadius: 12,
     padding: 14,
-    color: '#0F172A',
+    color: '#FFFFFF',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   formTextarea: {
     height: 80,
@@ -768,20 +754,20 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   selectChip: {
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#0F172A',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   selectChipActive: {
     backgroundColor: '#10B981',
     borderColor: '#10B981',
   },
   selectChipText: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 13,
     fontWeight: '600',
   },

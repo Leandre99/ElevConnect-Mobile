@@ -13,11 +13,12 @@ export default function TabsLayout() {
         tabBarActiveTintColor: '#10B981', // Emerald 500
         tabBarInactiveTintColor: '#64748B', // Slate 400
         tabBarStyle: {
-          backgroundColor: '#FFFFFF', 
+          backgroundColor: '#0F172A', // Slate 900
           borderTopWidth: 1,
-          borderTopColor: '#E2E8F0',
-          paddingTop: 8,
-          minHeight: 60, // Let safe-area handle the bottom padding automatically
+          borderTopColor: 'rgba(255, 255, 255, 0.08)',
+          height: Platform.OS === 'ios' ? 88 : 68,
+          paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+          paddingTop: 10,
         },
         tabBarLabelStyle: {
           fontSize: 11,

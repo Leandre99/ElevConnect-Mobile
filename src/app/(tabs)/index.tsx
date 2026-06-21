@@ -310,7 +310,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#0F172A',
   },
   safeArea: {
     flex: 1,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
     marginTop: 2,
   },
   headerSubtitle: {
@@ -337,11 +337,11 @@ const styles = StyleSheet.create({
   },
   roleSwitcher: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 12,
     padding: 3,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   rolePill: {
     paddingHorizontal: 12,
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   rolePillText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#94A3B8',
   },
   rolePillTextActive: {
     color: '#FFFFFF',
@@ -374,16 +374,11 @@ const styles = StyleSheet.create({
   },
   statCard: {
     width: (width - 48 - 12) / 2,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   statIconContainer: {
     width: 36,
@@ -396,11 +391,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   statLabel: {
     fontSize: 13,
-    color: '#475569',
+    color: '#94A3B8',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -412,7 +407,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   seeAllLink: {
     fontSize: 14,
@@ -425,14 +420,14 @@ const styles = StyleSheet.create({
   },
   farmCarouselCard: {
     width: width * 0.76,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(255, 255, 255, 0.05)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 4,
   },
@@ -444,7 +439,7 @@ const styles = StyleSheet.create({
   farmCardName: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   badge: {
     paddingHorizontal: 8,
@@ -464,7 +459,7 @@ const styles = StyleSheet.create({
   },
   farmCardDesc: {
     fontSize: 13,
-    color: '#475569',
+    color: '#94A3B8',
     marginTop: 10,
     lineHeight: 18,
   },
@@ -475,7 +470,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
   },
   farmMeta: {
     flexDirection: 'row',
@@ -485,28 +480,23 @@ const styles = StyleSheet.create({
   },
   farmMetaText: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#94A3B8',
     fontWeight: '500',
   },
   tasksContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 20,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   taskItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
   },
   taskCheckbox: {
     width: 22,
@@ -529,15 +519,15 @@ const styles = StyleSheet.create({
   taskName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   taskCompletedText: {
     textDecorationLine: 'line-through',
-    color: '#94A3B8',
+    color: '#64748B',
   },
   taskMeta: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#94A3B8',
   },
   taskTypeBadge: {
     paddingHorizontal: 8,
@@ -552,16 +542,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   urgencyCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   urgencyCardTop: {
     flexDirection: 'row',
@@ -574,11 +559,11 @@ const styles = StyleSheet.create({
   urgencySubject: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   urgencyMeta: {
     fontSize: 12,
-    color: '#64748B',
+    color: '#94A3B8',
   },
   priorityBadge: {
     paddingHorizontal: 8,
@@ -597,11 +582,11 @@ const styles = StyleSheet.create({
   priorityText: {
     fontSize: 9,
     fontWeight: '800',
-    color: '#EF4444',
+    color: '#EF4444', // falls back depending on background
   },
   urgencyDescription: {
     fontSize: 13,
-    color: '#475569',
+    color: '#94A3B8',
     marginTop: 10,
     lineHeight: 18,
   },
@@ -612,7 +597,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
   },
   urgencyDate: {
     fontSize: 11,
@@ -624,25 +609,20 @@ const styles = StyleSheet.create({
     color: '#10B981',
   },
   visioBanner: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E293B',
     borderRadius: 18,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   visioIconContainer: {
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    backgroundColor: 'rgba(139, 92, 246, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -653,11 +633,11 @@ const styles = StyleSheet.create({
   visioTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#FFFFFF',
   },
   visioSubtitle: {
     fontSize: 12,
-    color: '#475569',
+    color: '#94A3B8',
   },
   visioJoinBtn: {
     backgroundColor: '#8B5CF6',
@@ -674,13 +654,11 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#1E293B',
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
   emptyText: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 14,
     textAlign: 'center',
   },
