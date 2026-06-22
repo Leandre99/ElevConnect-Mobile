@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useApp } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -29,11 +30,12 @@ export default function RegisterScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <StatusBar style="dark" />
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Back Button */}
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={24} color="#1E293B" />
           </TouchableOpacity>
 
           {/* Header */}
@@ -70,7 +72,7 @@ export default function RegisterScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="Ex: Jean Dupont"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={name}
                   onChangeText={setName}
                 />
@@ -84,7 +86,7 @@ export default function RegisterScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="exemple@email.com"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -100,7 +102,7 @@ export default function RegisterScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="+229 97 00 00 00"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={phone}
                   onChangeText={setPhone}
                   keyboardType="phone-pad"
@@ -115,7 +117,7 @@ export default function RegisterScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="••••••••"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -156,7 +158,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -169,11 +171,18 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   header: {
     marginBottom: 24,
@@ -181,11 +190,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   subtitle: {
     fontSize: 15,
-    color: '#94A3B8',
+    color: '#64748B',
     marginTop: 8,
   },
   roleSelectionContainer: {
@@ -194,11 +203,11 @@ const styles = StyleSheet.create({
   },
   roleTabs: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#CBD5E1',
   },
   roleTab: {
     flex: 1,
@@ -210,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#10B981',
   },
   roleTabText: {
-    color: '#94A3B8',
+    color: '#475569',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -220,7 +229,7 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 16,
-    marginBottom: 32,
+    marginBottom: 40,
   },
   inputContainer: {
     gap: 8,
@@ -228,15 +237,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#CBD5E1',
     paddingHorizontal: 16,
     height: 56,
   },
@@ -245,7 +254,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 16,
     height: '100%',
   },
@@ -255,14 +264,14 @@ const styles = StyleSheet.create({
   btnRegister: {
     backgroundColor: '#10B981',
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
     marginTop: 10,
     shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
   },
   btnRegisterText: {
     color: '#FFFFFF',
@@ -273,6 +282,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   },
   footerText: {
     color: '#64748B',

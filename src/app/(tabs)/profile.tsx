@@ -4,12 +4,18 @@ import { useApp, Invoice } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { userRole, setUserRole, invoices, payInvoice } = useApp();
+  
+  // Profile Edit State
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(userRole === 'breeder' ? 'Jean Éleveur' : 'Dr. Diallo');
+  const [phone, setPhone] = useState('+229 97 00 00 00');
   
   // Checkout Modal State
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -44,40 +50,100 @@ export default function ProfileScreen() {
     ]);
   };
 
+  const toggleEditProfile = () => {
+    if (isEditing) {
+      // Save changes
+      Alert.alert('Succès', 'Votre profil a été mis à jour.');
+    }
+    setIsEditing(!isEditing);
+  };
+
   // Calculations
   const totalPaid = invoices.filter(i => i.status === 'paid').reduce((acc, curr) => acc + curr.amount, 0);
   const unpaidCount = invoices.filter(i => i.status === 'unpaid').length;
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Espace Facturation</Text>
+          <Text style={styles.title}>Mon Profil</Text>
           <TouchableOpacity style={styles.btnLogout} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="#EF4444" />
           </TouchableOpacity>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          {/* User Profile Card */}
+          {/* User Profile Info / Edit Form */}
           <View style={styles.profileCard}>
-            <View style={styles.avatarContainer}>
-              <Text style={styles.avatarText}>
-                {userRole === 'breeder' ? '🚜' : '🩺'}
-              </Text>
+            <View style={styles.profileCardHeader}>
+              <View style={styles.avatarContainer}>
+                <Text style={styles.avatarText}>
+                  {userRole === 'breeder' ? '🚜' : '🩺'}
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.btnEdit} onPress={toggleEditProfile}>
+                <Ionicons name={isEditing ? "checkmark" : "pencil"} size={18} color="#FFFFFF" />
+                <Text style={styles.btnEditText}>{isEditing ? "Enregistrer" : "Modifier"}</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>
-                {userRole === 'breeder' ? 'Jean Éleveur' : 'Dr. Diallo'}
-              </Text>
-              <Text style={styles.profileRole}>
-                Profil : {userRole === 'breeder' ? 'Éleveur de bétail' : 'Médecin Vétérinaire'}
-              </Text>
-              <Text style={styles.profileEmail}>
-                {userRole === 'breeder' ? 'jean.eleveur@elevconnect.com' : 'dr.diallo@elevconnect.com'}
-              </Text>
-            </View>
+
+            {isEditing ? (
+              <View style={styles.profileForm}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Nom complet</Text>
+                  <TextInput
+                    style={styles.inputActive}
+                    value={name}
+                    onChangeText={setName}
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Numéro de contact</Text>
+                  <TextInput
+                    style={styles.inputActive}
+                    value={phone}
+                    onChangeText={setPhone}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Adresse Email (Non modifiable)</Text>
+                  <Text style={styles.inputValueReadonly}>
+                    {userRole === 'breeder' ? 'jean.eleveur@elevconnect.com' : 'dr.diallo@elevconnect.com'}
+                  </Text>
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Rôle (Non modifiable)</Text>
+                  <Text style={styles.inputValueReadonly}>
+                    {userRole === 'breeder' ? 'Éleveur de bétail' : 'Médecin Vétérinaire'}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={styles.profileInfoView}>
+                <Text style={styles.profileNameDisplay}>{name}</Text>
+                <Text style={styles.profileRoleDisplay}>
+                  {userRole === 'breeder' ? 'Éleveur de bétail' : 'Médecin Vétérinaire'}
+                </Text>
+                
+                <View style={styles.infoRow}>
+                  <Ionicons name="call-outline" size={18} color="#64748B" />
+                  <Text style={styles.infoText}>{phone}</Text>
+                </View>
+                
+                <View style={styles.infoRow}>
+                  <Ionicons name="mail-outline" size={18} color="#64748B" />
+                  <Text style={styles.infoText}>
+                    {userRole === 'breeder' ? 'jean.eleveur@elevconnect.com' : 'dr.diallo@elevconnect.com'}
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
           {/* Stats Bar */}
@@ -86,14 +152,14 @@ export default function ProfileScreen() {
               <Text style={styles.statLabel}>Total Réglé</Text>
               <Text style={styles.statValue}>{(totalPaid).toLocaleString()} F</Text>
             </View>
-            <View style={[styles.statBox, { borderLeftWidth: 1, borderLeftColor: 'rgba(255,255,255,0.05)' }]}>
+            <View style={[styles.statBox, { borderLeftWidth: 1, borderLeftColor: '#E2E8F0' }]}>
               <Text style={styles.statLabel}>Factures en Attente</Text>
               <Text style={[styles.statValue, unpaidCount > 0 && { color: '#EF4444' }]}>{unpaidCount}</Text>
             </View>
           </View>
 
           {/* Invoices List */}
-          <Text style={styles.sectionTitle}>Historique des Transactions</Text>
+          <Text style={styles.sectionTitle}>Historique des Factures</Text>
           <View style={styles.invoicesList}>
             {invoices.length > 0 ? (
               invoices.map(invoice => {
@@ -133,27 +199,11 @@ export default function ProfileScreen() {
               })
             ) : (
               <View style={styles.emptyContainer}>
-                <Ionicons name="card-outline" size={44} color="#475569" />
+                <Ionicons name="card-outline" size={44} color="#94A3B8" />
                 <Text style={styles.emptyText}>Aucune transaction enregistrée.</Text>
               </View>
             )}
           </View>
-
-          {/* Quick options */}
-          <View style={styles.optionsContainer}>
-            <Text style={styles.optionsTitle}>Options & Test</Text>
-            <TouchableOpacity 
-              style={styles.optionRow}
-              onPress={() => setUserRole(userRole === 'breeder' ? 'vet' : 'breeder')}
-            >
-              <View style={styles.optionLeft}>
-                <Ionicons name="swap-horizontal" size={20} color="#10B981" />
-                <Text style={styles.optionText}>Basculer le rôle utilisateur</Text>
-              </View>
-              <Text style={styles.optionRight}>{userRole.toUpperCase()}</Text>
-            </TouchableOpacity>
-          </View>
-
         </ScrollView>
       </SafeAreaView>
 
@@ -164,7 +214,7 @@ export default function ProfileScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Règlement de Facture</Text>
               <TouchableOpacity onPress={() => setSelectedInvoice(null)} disabled={paymentLoading}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -250,7 +300,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -264,17 +314,24 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnLogout: {
     width: 40,
     height: 40,
-    borderRadius: 10,
-    backgroundColor: '#1E293B',
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -283,20 +340,28 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
-    gap: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  profileCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 10,
   },
   avatarContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#0F172A',
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#F0FDF4',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
@@ -305,31 +370,102 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
   },
-  profileInfo: {
-    flex: 1,
-    gap: 2,
+  btnEdit: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#10B981',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
-  profileName: {
-    fontSize: 18,
-    fontWeight: '800',
+  btnEditText: {
     color: '#FFFFFF',
-  },
-  profileRole: {
     fontSize: 13,
-    color: '#10B981',
-    fontWeight: '600',
+    fontWeight: '700',
   },
-  profileEmail: {
-    fontSize: 12,
+  profileInfoView: {
+    gap: 8,
+  },
+  profileNameDisplay: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  profileRoleDisplay: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#10B981',
+    marginBottom: 8,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 4,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  profileForm: {
+    gap: 16,
+    marginTop: 10,
+  },
+  inputGroup: {
+    gap: 6,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
     color: '#64748B',
+  },
+  inputValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#0F172A',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  inputValueReadonly: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#94A3B8',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  inputActive: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#0F172A',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#10B981',
   },
   statsBar: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   statBox: {
     flex: 1,
@@ -339,28 +475,33 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 11,
     color: '#64748B',
-    fontWeight: '600',
+    fontWeight: '700',
     textTransform: 'uppercase',
   },
   statValue: {
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 18,
+    fontWeight: '900',
     color: '#10B981',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   invoicesList: {
     gap: 14,
   },
   invoiceCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
     gap: 10,
   },
   invoiceCardTop: {
@@ -374,22 +515,23 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   invoiceRef: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  invoiceDate: {
-    fontSize: 11,
-    color: '#64748B',
-    marginTop: 2,
-  },
-  invoiceAmount: {
     fontSize: 15,
     fontWeight: '800',
+    color: '#0F172A',
+  },
+  invoiceDate: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+    fontWeight: '500',
+  },
+  invoiceAmount: {
+    fontSize: 16,
+    fontWeight: '900',
   },
   invoiceDesc: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#475569',
     lineHeight: 18,
   },
   btnPay: {
@@ -398,39 +540,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: '#10B981',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingVertical: 12,
     marginTop: 6,
   },
   btnPayText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
   },
   emptyContainer: {
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   emptyText: {
     color: '#64748B',
-    fontSize: 13,
+    fontSize: 14,
     textAlign: 'center',
+    marginTop: 8,
   },
   optionsContainer: {
-    backgroundColor: '#1E293B',
-    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 12,
   },
   optionsTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
   },
   optionRow: {
     flexDirection: 'row',
@@ -444,24 +589,24 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   optionText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   optionRight: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: '#10B981',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.85)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     padding: 24,
     maxHeight: '90%',
   },
@@ -469,12 +614,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   checkoutForm: {
     gap: 16,
@@ -482,13 +627,13 @@ const styles = StyleSheet.create({
   },
   creditCard: {
     height: 180,
-    backgroundColor: '#059669', // Emerald 600 dark green card
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: '#0F172A', // Slate 900 dark card for contrast
+    borderRadius: 20,
+    padding: 24,
     justifyContent: 'space-between',
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.3,
     shadowRadius: 12,
     elevation: 8,
   },
@@ -499,15 +644,15 @@ const styles = StyleSheet.create({
   },
   cardBrandName: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   cardNumberText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
-    letterSpacing: 2.5,
+    letterSpacing: 3,
     textAlign: 'center',
     marginVertical: 14,
   },
@@ -516,36 +661,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cardLabel: {
-    color: '#A7F3D0',
-    fontSize: 8,
-    fontWeight: '600',
+    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
   cardValueText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 2,
+    fontSize: 14,
+    fontWeight: '800',
+    marginTop: 4,
   },
   billingSummary: {
-    backgroundColor: '#0F172A',
-    borderRadius: 12,
-    padding: 14,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   billLabel: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '600',
     color: '#64748B',
   },
   billAmount: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '900',
     color: '#10B981',
     marginTop: 4,
   },
   billDesc: {
-    fontSize: 12,
-    color: '#94A3B8',
+    fontSize: 13,
+    color: '#475569',
     marginTop: 6,
   },
   formGroup: {
@@ -553,17 +700,18 @@ const styles = StyleSheet.create({
   },
   formLabel: {
     fontSize: 13,
-    fontWeight: '600',
-    color: '#94A3B8',
+    fontWeight: '700',
+    color: '#475569',
   },
   formInput: {
-    backgroundColor: '#0F172A',
-    borderRadius: 12,
-    padding: 14,
-    color: '#FFFFFF',
-    fontSize: 14,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 16,
+    color: '#0F172A',
+    fontSize: 15,
+    fontWeight: '600',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#CBD5E1',
   },
   formRow: {
     flexDirection: 'row',
@@ -571,23 +719,29 @@ const styles = StyleSheet.create({
   },
   btnSubmit: {
     backgroundColor: '#10B981',
-    borderRadius: 14,
-    paddingVertical: 14,
+    borderRadius: 16,
+    paddingVertical: 18,
     alignItems: 'center',
     marginTop: 10,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
   },
   btnSubmitText: {
     color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
   },
   loadingContainer: {
-    paddingVertical: 20,
+    paddingVertical: 24,
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
   },
   loadingText: {
-    color: '#94A3B8',
-    fontSize: 12,
+    color: '#64748B',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

@@ -43,6 +43,7 @@ export default function TabsLayout() {
         options={{
           title: 'Fermes',
           tabBarLabel: 'Fermes',
+          href: userRole === 'vet' ? null : '/(tabs)/farms',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'business' : 'business-outline'} size={22} color={color} />
           ),
@@ -53,6 +54,7 @@ export default function TabsLayout() {
         options={{
           title: 'Tâches',
           tabBarLabel: 'Tâches',
+          href: userRole === 'vet' ? null : '/(tabs)/tasks',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'checkbox' : 'checkbox-outline'} size={22} color={color} />
           ),

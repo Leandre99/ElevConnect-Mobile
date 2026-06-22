@@ -182,12 +182,12 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+    backgroundColor: '#FFFFFF', // Solid white
     borderRadius: 20,
-    padding: 20, // Reduced padding
+    padding: 24, // Added a bit more padding for breathing room
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
+    borderColor: '#E2E8F0', // Subtle solid border
     shadowColor: '#94A3B8',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,

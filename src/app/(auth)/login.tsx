@@ -4,10 +4,11 @@ import { useRouter } from 'expo-router';
 import { useApp } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { userRole, setUserRole } = useApp();
+  const { userRole } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -21,30 +22,17 @@ export default function LoginScreen() {
     router.replace('/(tabs)');
   };
 
-  const handleDemoLogin = (role: 'breeder' | 'vet') => {
-    setUserRole(role);
-    if (role === 'breeder') {
-      setEmail('jean.eleveur@elevconnect.com');
-      setPassword('demo1234');
-    } else {
-      setEmail('dr.diallo@elevconnect.com');
-      setPassword('demo1234');
-    }
-    setTimeout(() => {
-      router.replace('/(tabs)');
-    }, 300);
-  };
-
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <StatusBar style="dark" />
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Back Button */}
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+            <Ionicons name="arrow-back" size={24} color="#1E293B" />
           </TouchableOpacity>
 
           {/* Header */}
@@ -67,7 +55,7 @@ export default function LoginScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="exemple@email.com"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -83,7 +71,7 @@ export default function LoginScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="••••••••"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor="#94A3B8"
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -112,26 +100,6 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Demo Section */}
-          <View style={styles.demoSection}>
-            <Text style={styles.demoTitle}>Ou connectez-vous rapidement (DÉMO) :</Text>
-            <View style={styles.demoButtons}>
-              <TouchableOpacity 
-                style={[styles.demoBtn, styles.demoBtnBreeder]} 
-                onPress={() => handleDemoLogin('breeder')}
-              >
-                <Text style={styles.demoBtnText}>🚜 Démo Éleveur</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.demoBtn, styles.demoBtnVet]} 
-                onPress={() => handleDemoLogin('vet')}
-              >
-                <Text style={styles.demoBtnText}>🩺 Démo Vétérinaire</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
           {/* Footer Link */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>Vous n'avez pas de compte ? </Text>
@@ -148,7 +116,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -161,11 +129,18 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   header: {
     marginBottom: 32,
@@ -173,11 +148,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   subtitle: {
     fontSize: 15,
-    color: '#94A3B8',
+    color: '#64748B',
     marginTop: 8,
   },
   roleHighlight: {
@@ -186,7 +161,7 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 20,
-    marginBottom: 32,
+    marginBottom: 40,
   },
   inputContainer: {
     gap: 8,
@@ -194,15 +169,15 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#94A3B8',
+    color: '#475569',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#CBD5E1',
     paddingHorizontal: 16,
     height: 56,
   },
@@ -211,7 +186,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 16,
     height: '100%',
   },
@@ -229,64 +204,25 @@ const styles = StyleSheet.create({
   btnLogin: {
     backgroundColor: '#10B981',
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 18,
     alignItems: 'center',
     marginTop: 10,
     shadowColor: '#10B981',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
   },
   btnLoginText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
   },
-  demoSection: {
-    backgroundColor: 'rgba(30, 41, 59, 0.4)',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-    marginBottom: 32,
-  },
-  demoTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#64748B',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  demoButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  demoBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  demoBtnBreeder: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
-  },
-  demoBtnVet: {
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(59, 130, 246, 0.3)',
-  },
-  demoBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600',
-  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
   footerText: {
     color: '#64748B',
