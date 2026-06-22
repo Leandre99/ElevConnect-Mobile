@@ -36,9 +36,14 @@ export default function AlertsScreen() {
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
 
   // Vet Form States
-  const [selectedDisease, setSelectedDisease] = useState(COMMON_DISEASES[0].nom);
+  const [selectedDisease, setSelectedDisease] = useState('');
   const [treatment, setTreatment] = useState('');
   const [meetingDate, setMeetingDate] = useState('2026-06-10 à 16:30');
+  
+  // Physical Intervention States
+  const [physicalModalVisible, setPhysicalModalVisible] = useState(false);
+  const [physicalPrice, setPhysicalPrice] = useState('');
+  const [physicalDate, setPhysicalDate] = useState('');
 
   // Simulator for Photo Capture & AI Disease analysis
   const handleSimulatePhoto = () => {
@@ -113,6 +118,16 @@ export default function AlertsScreen() {
     );
     setMeetingModalVisible(false);
     Alert.alert('Consultation Programmée', 'Un lien visio a été ajouté à cette alerte.');
+  };
+
+  const handleProposePhysical = () => {
+    if (!physicalDate || !physicalPrice) {
+      Alert.alert('Erreur', 'Veuillez renseigner la date et le devis.');
+      return;
+    }
+    Alert.alert('Devis Envoyé', `Une proposition d'intervention physique a été envoyée à l'éleveur pour un montant de ${physicalPrice} F CFA.`);
+    setPhysicalModalVisible(false);
+    setDetailAlert(null);
   };
 
   const simulateDraw = (x: number, y: number) => {
@@ -194,7 +209,7 @@ export default function AlertsScreen() {
                         PRIORITÉ : {alert.priority.toUpperCase()}
                       </Text>
                     </View>
-                    <Text style={styles.alertDetailsLink}>Détails →</Text>
+                    <Text style={styles.alertDetailsLink}>Voir les détails</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -308,7 +323,7 @@ export default function AlertsScreen() {
                       onPress={() => setMeetingModalVisible(true)}
                     >
                       <Ionicons name="videocam-outline" size={18} color="#FFFFFF" />
-                      <Text style={styles.btnVetText}>Planifier Appel Visio</Text>
+                      <Text style={styles.btnVetText}>Visio</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity 
@@ -316,7 +331,15 @@ export default function AlertsScreen() {
                       onPress={() => setDiagModalVisible(true)}
                     >
                       <Ionicons name="checkbox-outline" size={18} color="#FFFFFF" />
-                      <Text style={styles.btnVetText}>Établir Diagnostic</Text>
+                      <Text style={styles.btnVetText}>Diagnostic</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                      style={styles.btnVetPhysical}
+                      onPress={() => setPhysicalModalVisible(true)}
+                    >
+                      <Ionicons name="car-outline" size={18} color="#FFFFFF" />
+                      <Text style={styles.btnVetText}>Déplacement</Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -487,20 +510,14 @@ export default function AlertsScreen() {
 
             <ScrollView contentContainerStyle={styles.modalForm} showsVerticalScrollIndicator={false}>
               <View style={styles.formGroup}>
-                <Text style={styles.formLabel}>Sélectionnez la maladie</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  {COMMON_DISEASES.map(dis => (
-                    <TouchableOpacity
-                      key={dis.nom}
-                      style={[styles.selectChip, selectedDisease === dis.nom && styles.selectChipActive]}
-                      onPress={() => setSelectedDisease(dis.nom)}
-                    >
-                      <Text style={[styles.selectChipText, selectedDisease === dis.nom && styles.selectChipTextActive]}>
-                        {dis.nom}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                <Text style={styles.formLabel}>Maladie diagnostiquée</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Ex: Coccidiose, Piétin..."
+                  placeholderTextColor="#94A3B8"
+                  value={selectedDisease}
+                  onChangeText={setSelectedDisease}
+                />
               </View>
 
               <View style={styles.formGroup}>
@@ -524,6 +541,53 @@ export default function AlertsScreen() {
                 <Text style={styles.btnSubmitText}>Enregistrer & Clôturer</Text>
               </TouchableOpacity>
             </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ================= MODAL PHYSICAL INTERVENTION (VET) ================= */}
+      <Modal visible={physicalModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Intervention Physique</Text>
+              <TouchableOpacity onPress={() => setPhysicalModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalForm}>
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Date de l'intervention</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Ex: Demain à 09h00"
+                  placeholderTextColor="#94A3B8"
+                  value={physicalDate}
+                  onChangeText={setPhysicalDate}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.formLabel}>Devis estimé (en FCFA)</Text>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Ex: 15000"
+                  placeholderTextColor="#94A3B8"
+                  keyboardType="numeric"
+                  value={physicalPrice}
+                  onChangeText={setPhysicalPrice}
+                />
+              </View>
+              
+              <Text style={styles.infoText}>
+                Cette proposition sera envoyée à l'éleveur. Une fois acceptée et payée, l'intervention sera confirmée.
+              </Text>
+
+              <TouchableOpacity style={styles.btnSubmit} onPress={handleProposePhysical}>
+                <Text style={styles.btnSubmitText}>Envoyer le devis</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -620,7 +684,7 @@ export default function AlertsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -636,7 +700,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnNewAlert: {
     flexDirection: 'row',
@@ -665,17 +729,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   alertsContainer: {
     gap: 16,
   },
   alertCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   alertCardTop: {
     flexDirection: 'row',
@@ -689,7 +753,7 @@ const styles = StyleSheet.create({
   alertCardBreed: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
     flexShrink: 1,
   },
   alertCardFarm: {
@@ -740,7 +804,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    borderTopColor: '#F1F5F9',
   },
   priorityTag: {
     paddingHorizontal: 8,
@@ -762,7 +826,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -777,7 +841,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   modalForm: {
     gap: 16,
@@ -792,26 +856,26 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   formInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   formTextarea: {
     height: 80,
     textAlignVertical: 'top',
   },
   selectChip: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   selectChipActive: {
     backgroundColor: '#10B981',
@@ -823,7 +887,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   selectChipTextActive: {
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '700',
   },
   prioritySelector: {
@@ -832,12 +896,12 @@ const styles = StyleSheet.create({
   },
   prioBtn: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   prioBtnText: {
     fontSize: 11,
@@ -877,11 +941,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   aiResultBox: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   aiResultTitle: {
     fontSize: 12,
@@ -924,7 +988,7 @@ const styles = StyleSheet.create({
   },
   detailValue: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '700',
   },
   detailBlock: {
@@ -934,7 +998,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#94A3B8',
     lineHeight: 20,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     padding: 12,
     borderRadius: 10,
   },
@@ -943,13 +1007,13 @@ const styles = StyleSheet.create({
   },
   mockPhoto: {
     height: 120,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   mockPhotoText: {
     fontSize: 11,
@@ -975,7 +1039,7 @@ const styles = StyleSheet.create({
   },
   scheduledCallDate: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '600',
   },
   btnJoinCall: {
@@ -1021,25 +1085,27 @@ const styles = StyleSheet.create({
   },
   diagValue: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontWeight: '600',
   },
   prescriptionText: {
     fontSize: 13,
-    color: '#FFFFFF',
+    color: '#0F172A',
     lineHeight: 18,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     padding: 12,
     borderRadius: 10,
     alignSelf: 'stretch',
   },
   vetActions: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
     marginTop: 20,
+    flexWrap: 'wrap',
   },
   btnVetCall: {
     flex: 1,
+    minWidth: '45%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1050,11 +1116,23 @@ const styles = StyleSheet.create({
   },
   btnVetTreat: {
     flex: 1,
+    minWidth: '45%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     backgroundColor: '#10B981',
+    borderRadius: 12,
+    paddingVertical: 14,
+  },
+  btnVetPhysical: {
+    flex: 1,
+    minWidth: '95%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#EF4444',
     borderRadius: 12,
     paddingVertical: 14,
   },
@@ -1070,13 +1148,13 @@ const styles = StyleSheet.create({
   },
   callContainer: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     justifyContent: 'space-between',
   },
   mainVideoFrame: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
   },
   videoPlaceholderBg: {
     flex: 1,
@@ -1085,7 +1163,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   videoText: {
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -1109,7 +1187,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 140,
     borderRadius: 12,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderWidth: 2,
     borderColor: '#FFFFFF',
     overflow: 'hidden',
@@ -1125,7 +1203,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   pipText: {
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 10,
     fontWeight: '700',
   },
@@ -1143,7 +1221,7 @@ const styles = StyleSheet.create({
   drawTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   drawSubtitle: {
     fontSize: 10,
@@ -1168,13 +1246,13 @@ const styles = StyleSheet.create({
     gap: 24,
     paddingBottom: Platform.OS === 'ios' ? 44 : 24,
     paddingTop: 16,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   callActionBtn: {
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },

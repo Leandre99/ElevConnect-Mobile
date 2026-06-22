@@ -287,7 +287,7 @@ export default function DashboardScreen() {
                         </Text>
                         <View style={styles.urgencyCardBottom}>
                           <Text style={styles.urgencyDate}>Envoyé le {alert.date}</Text>
-                          <Text style={styles.urgencyActionText}>Détails →</Text>
+                          <Text style={styles.urgencyActionText}>Détails</Text>
                         </View>
                       </TouchableOpacity>
                     ))
@@ -397,7 +397,7 @@ export default function DashboardScreen() {
                         </Text>
                         <View style={styles.urgencyCardBottom}>
                           <Text style={styles.urgencyDate}>Reçu le {alert.date}</Text>
-                          <Text style={styles.urgencyActionText}>Voir l'alerte →</Text>
+                          <Text style={styles.urgencyActionText}>Voir l'alerte</Text>
                         </View>
                       </TouchableOpacity>
                     ))

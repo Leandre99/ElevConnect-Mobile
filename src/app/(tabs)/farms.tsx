@@ -268,7 +268,7 @@ export default function FarmsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Nouvelle Exploitation</Text>
               <TouchableOpacity onPress={() => setFarmModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -326,7 +326,7 @@ export default function FarmsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Ajouter Bêtes / Lot</Text>
               <TouchableOpacity onPress={() => setAnimalModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -423,7 +423,7 @@ export default function FarmsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnAddFarm: {
     flexDirection: 'row',
@@ -474,12 +474,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   farmDeckCardActive: {
     backgroundColor: '#10B981',
@@ -494,11 +494,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   farmDetailsCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 10,
   },
   farmDetailsHeader: {
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   farmDetailsName: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   badgeActive: {
     backgroundColor: 'rgba(16, 185, 129, 0.15)',
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
   animalsSectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   btnAddAnimal: {
     flexDirection: 'row',
@@ -569,11 +569,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   animalCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   animalCardHeader: {
     flexDirection: 'row',
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   animalBreed: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   animalSpecies: {
     fontSize: 12,
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   animalStatValue: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
     marginTop: 4,
   },
   lotControls: {
@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
     padding: 40,
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 18,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.03)',
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   modalForm: {
     gap: 16,
@@ -721,13 +721,13 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   formInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
-    color: '#FFFFFF',
+    color: '#0F172A',
     fontSize: 14,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   formTextarea: {
     height: 80,
@@ -754,13 +754,13 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   selectChip: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   selectChipActive: {
     backgroundColor: '#10B981',

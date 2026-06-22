@@ -215,7 +215,7 @@ export default function TasksScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   dayStripContainer: {
     flexDirection: 'row',
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     width: (width - 32 - 12 * 6) / 7,
     height: 64,
     borderRadius: 12,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   dayNum: {
     fontSize: 15,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1E293B',
     marginTop: 4,
   },
   dayTextActive: {
@@ -276,11 +276,11 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   progressCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
     gap: 14,
   },
   progressTextRow: {
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   progressCardTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1E293B',
   },
   progressCardSub: {
     fontSize: 12,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 10,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 5,
     overflow: 'hidden',
   },
@@ -317,18 +317,18 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1E293B',
     marginTop: 10,
   },
   maturationTimelineDeck: {
     gap: 12,
   },
   maturationCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.04)',
+    borderColor: '#E2E8F0',
     gap: 8,
   },
   maturationHeader: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   maturationTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#1E293B',
   },
   maturationFarm: {
     fontSize: 11,
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   maturationBarBg: {
     height: 6,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
     borderRadius: 3,
     overflow: 'hidden',
     marginVertical: 4,
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   },
   taskTabs: {
     flexDirection: 'row',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 2,
   },
@@ -424,11 +424,11 @@ const styles = StyleSheet.create({
   taskItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
   },
   taskCheckbox: {
     width: 22,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   taskName: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   taskSub: {
     fontSize: 12,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   taskQty: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   taskTime: {
     fontSize: 11,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     gap: 8,
   },
