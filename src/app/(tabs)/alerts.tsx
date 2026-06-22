@@ -683,12 +683,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   alertCardInfo: {
+    flex: 1,
     gap: 2,
   },
   alertCardBreed: {
     fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',
+    flexShrink: 1,
   },
   alertCardFarm: {
     fontSize: 12,
