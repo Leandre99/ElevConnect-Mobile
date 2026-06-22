@@ -50,7 +50,7 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {userRole === 'breeder' ? (
             /* ================= BREEDER DASHBOARD ================= */
             <View style={styles.dashboardView}>
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     paddingTop: 16,
   },
   dashboardView: {

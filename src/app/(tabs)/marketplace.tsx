@@ -177,11 +177,10 @@ export default function MarketplaceScreen() {
           )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {activeTab === 'buy' ? (
             /* ================= BUY TAB (LISTINGS) ================= */
             <View style={styles.buyView}>
-              <Text style={styles.sectionTitle}>Annonces disponibles</Text>
               <View style={styles.itemsGrid}>
                 {marketItems.map(item => (
                   <View key={item.id} style={styles.itemCard}>
@@ -212,15 +211,13 @@ export default function MarketplaceScreen() {
                       </View>
                     </View>
 
-                    {userRole === 'breeder' && (
-                      <TouchableOpacity 
-                        style={styles.btnBuy}
-                        onPress={() => handleBuyItem(item)}
-                      >
-                        <Ionicons name="cart-outline" size={16} color="#FFFFFF" />
-                        <Text style={styles.btnBuyText}>Acheter</Text>
-                      </TouchableOpacity>
-                    )}
+                    <TouchableOpacity 
+                      style={styles.btnBuy}
+                      onPress={() => handleBuyItem(item)}
+                    >
+                      <Ionicons name="cart-outline" size={16} color="#FFFFFF" />
+                      <Text style={styles.btnBuyText}>Acheter</Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
@@ -284,7 +281,7 @@ export default function MarketplaceScreen() {
             </View>
 
             {selectedAnimalToSell && (
-              <ScrollView contentContainerStyle={styles.modalForm} showsVerticalScrollIndicator={false}>
+              <ScrollView contentContainerStyle={styles.modalForm}>
                 <View style={styles.previewBox}>
                   <Text style={styles.previewText}>
                     📦 En cours de mise en vente : Lot de {selectedAnimalToSell.nombre} {selectedAnimalToSell.espece}(s) ({selectedAnimalToSell.race})
@@ -375,7 +372,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     paddingTop: 16,
     gap: 16,
   },
@@ -453,8 +450,8 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   itemMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    gap: 8,
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
@@ -464,7 +461,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    flex: 1,
   },
   metaText: {
     fontSize: 12,

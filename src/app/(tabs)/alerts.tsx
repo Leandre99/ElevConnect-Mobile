@@ -152,7 +152,7 @@ export default function AlertsScreen() {
           )}
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Active alerts List */}
           <Text style={styles.sectionTitle}>Historique des alertes sanitaires</Text>
           <View style={styles.alertsContainer}>
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     paddingTop: 16,
     gap: 16,
   },

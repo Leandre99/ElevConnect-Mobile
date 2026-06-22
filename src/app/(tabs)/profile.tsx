@@ -74,7 +74,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* User Profile Info / Edit Form */}
           <View style={styles.profileCard}>
             <View style={styles.profileCardHeader}>
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     paddingTop: 16,
     gap: 20,
   },

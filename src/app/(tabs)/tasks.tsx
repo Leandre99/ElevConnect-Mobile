@@ -74,7 +74,7 @@ export default function TasksScreen() {
           ))}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Progress Section */}
           <View style={styles.progressCard}>
             <View style={styles.progressTextRow}>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     gap: 20,
   },
   progressCard: {

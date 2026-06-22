@@ -118,7 +118,7 @@ export default function FarmsScreen() {
           )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Farms Selector Horizontal Deck */}
           <Text style={styles.sectionLabel}>Sélectionnez une ferme :</Text>
           <ScrollView 
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 120,
     paddingTop: 16,
     gap: 20,
   },
