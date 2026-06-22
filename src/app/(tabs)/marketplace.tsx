@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert, Modal, Dimensions } from 'react-native';
 import { useApp, Animal } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 
 interface MarketItem {
   id: string;
-  animalId?: string; // link to breeder's animal if sold by them
+  animalId?: string;
   title: string;
   breed: string;
   espece: string;
@@ -20,6 +20,8 @@ interface MarketItem {
   icon: string;
 }
 
+const CATEGORIES = ['Tous', 'Volaille', 'Bovin', 'Ovin', 'Caprin', 'Porcin'];
+
 export default function MarketplaceScreen() {
   const { userRole, animals, farms, invoices } = useApp();
   const [activeTab, setActiveTab] = useState<'buy' | 'sell'>('buy');
@@ -28,6 +30,17 @@ export default function MarketplaceScreen() {
   const [sellModalVisible, setSellModalVisible] = useState(false);
   const [selectedAnimalToSell, setSelectedAnimalToSell] = useState<Animal | null>(null);
 
+  // Search & Filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Tous');
+
+  // Pagination
+  const [visibleItemsCount, setVisibleItemsCount] = useState(5);
+
+  // Ad Details Modal
+  const [selectedAd, setSelectedAd] = useState<MarketItem | null>(null);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+
   // Form State
   const [sellPrice, setSellPrice] = useState('');
   const [sellDesc, setSellDesc] = useState('');
@@ -35,45 +48,36 @@ export default function MarketplaceScreen() {
   // Initial Mock Marketplace items
   const [marketItems, setMarketItems] = useState<MarketItem[]>([
     {
-      id: 'm1',
-      title: 'Lot de 100 poulets Cobb 500 matures',
-      breed: 'Poulet de chair (Cobb 500)',
-      espece: 'Volaille',
-      qty: 100,
-      price: 250000, // CFA or units
-      location: 'Ferme Avicole Sud, Cotonou',
-      seller: 'Amadou B.',
-      desc: 'Poulets élevés en plein air, vaccinés contre la pseudo-peste. Poids moyen de 2.2 kg.',
-      icon: '🐔',
+      id: 'm1', title: 'Lot de 100 poulets Cobb 500 matures', breed: 'Cobb 500', espece: 'Volaille', qty: 100, price: 250000,
+      location: 'Ferme Avicole Sud, Cotonou', seller: 'Amadou B.', desc: 'Poulets élevés en plein air, vaccinés.', icon: '🐔'
     },
     {
-      id: 'm2',
-      title: 'Génisse Goudali de reproduction',
-      breed: 'Goudali',
-      espece: 'Bovin',
-      qty: 1,
-      price: 450000,
-      location: 'Ranch du Borgou, Parakou',
-      seller: 'Ferme Borgou-Lait',
-      desc: 'Génisse de 18 mois, excellente lignée laitière, carnet de santé à jour.',
-      icon: '🐂',
+      id: 'm2', title: 'Génisse Goudali de reproduction', breed: 'Goudali', espece: 'Bovin', qty: 1, price: 450000,
+      location: 'Ranch du Borgou, Parakou', seller: 'Ferme Borgou-Lait', desc: 'Génisse de 18 mois, excellente lignée laitière.', icon: '🐂'
     },
     {
-      id: 'm3',
-      title: 'Mouton Ladoum Mâle Tabaski',
-      breed: 'Ladoum',
-      espece: 'Ovin',
-      qty: 1,
-      price: 850000,
-      location: 'Dakar, Hann Bel-Air',
-      seller: 'Élevage Royal Ladoum',
-      desc: 'Superbe bélier Ladoum de 14 mois, hauteur au garrot 95cm, excellent pour la Tabaski.',
-      icon: '🐑',
+      id: 'm3', title: 'Mouton Ladoum Mâle Tabaski', breed: 'Ladoum', espece: 'Ovin', qty: 1, price: 850000,
+      location: 'Dakar, Hann Bel-Air', seller: 'Élevage Royal', desc: 'Superbe bélier Ladoum de 14 mois, hauteur au garrot 95cm.', icon: '🐑'
+    },
+    {
+      id: 'm4', title: 'Lot de 50 pondeuses Isa Brown', breed: 'Isa Brown', espece: 'Volaille', qty: 50, price: 150000,
+      location: 'Porto-Novo', seller: 'Ferme Avicole Est', desc: 'Pondeuses en pic de ponte, très rentables.', icon: '🐔'
+    },
+    {
+      id: 'm5', title: 'Vache Laitière Holstein', breed: 'Holstein', espece: 'Bovin', qty: 1, price: 1200000,
+      location: 'Abomey-Calavi', seller: 'Coopérative Laitière', desc: 'Vache très productive, 20L par jour.', icon: '🐄'
+    },
+    {
+      id: 'm6', title: 'Chèvre Rousse de Maradi', breed: 'Rousse de Maradi', espece: 'Caprin', qty: 3, price: 105000,
+      location: 'Kandi', seller: 'Elevage Nord', desc: 'Lot de 3 chèvres en bonne santé.', icon: '🐐'
+    },
+    {
+      id: 'm7', title: 'Porcelets Large White', breed: 'Large White', espece: 'Porcin', qty: 5, price: 250000,
+      location: 'Ouidah', seller: 'Ferme Porcine', desc: 'Porcelets sevrés, vermifugés.', icon: '🐖'
     }
   ]);
 
-  // Filter breeder's animals that are mature (e.g. age close to or exceeding maturation days)
-  // Let's assume an animal is mature if its age * 30 days is >= maturation_jours - 60 days
+  // Filter breeder's animals that are mature
   const matureAnimals = animals.filter(ani => {
     const ageInDays = ani.age * 30;
     return ageInDays >= (ani.maturation_jours - 60);
@@ -88,21 +92,18 @@ export default function MarketplaceScreen() {
         { 
           text: 'Confirmer', 
           onPress: () => {
-            // Generate invoice in app context (simulate purchase invoice)
             const mockInvoice = {
               id: `i_mkt_${Date.now()}`,
               amount: item.price,
               status: 'unpaid' as const,
               description: `Achat Marketplace : ${item.qty}x ${item.breed} de ${item.seller}`,
               date: new Date().toISOString().split('T')[0],
-              veterinaire: item.seller, // use seller as reference
+              veterinaire: item.seller, 
             };
             
-            // Push mock invoice
             invoices.unshift(mockInvoice);
-            
-            // Remove from marketplace
             setMarketItems(prev => prev.filter(i => i.id !== item.id));
+            setDetailsModalVisible(false);
             
             Alert.alert(
               'Achat Initie', 
@@ -153,10 +154,33 @@ export default function MarketplaceScreen() {
     Alert.alert('Succès', 'Votre annonce a été publiée avec succès !');
   };
 
+  const openAdDetails = (item: MarketItem) => {
+    setSelectedAd(item);
+    setDetailsModalVisible(true);
+  };
+
+  // Filter logic
+  const filteredItems = useMemo(() => {
+    return marketItems.filter(item => {
+      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            item.breed.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            item.location.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCat = selectedCategory === 'Tous' || item.espece.toLowerCase() === selectedCategory.toLowerCase();
+      return matchesSearch && matchesCat;
+    });
+  }, [marketItems, searchQuery, selectedCategory]);
+
+  const displayedItems = filteredItems.slice(0, visibleItemsCount);
+  const hasMore = visibleItemsCount < filteredItems.length;
+
+  const loadMore = () => {
+    setVisibleItemsCount(prev => prev + 5);
+  };
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        {/* Header */}
+        {/* Header with Bottom Border */}
         <View style={styles.header}>
           <Text style={styles.title}>Marché Agricole</Text>
           {userRole === 'breeder' && (
@@ -181,45 +205,66 @@ export default function MarketplaceScreen() {
           {activeTab === 'buy' ? (
             /* ================= BUY TAB (LISTINGS) ================= */
             <View style={styles.buyView}>
+              
+              {/* Search Bar */}
+              <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color="#94A3B8" />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Rechercher une race, une localisation..."
+                  placeholderTextColor="#94A3B8"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                />
+              </View>
+
+              {/* Filter Chips */}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
+                {CATEGORIES.map(cat => (
+                  <TouchableOpacity 
+                    key={cat} 
+                    style={[styles.filterChip, selectedCategory === cat && styles.filterChipActive]}
+                    onPress={() => {
+                      setSelectedCategory(cat);
+                      setVisibleItemsCount(5); // reset pagination on filter change
+                    }}
+                  >
+                    <Text style={[styles.filterText, selectedCategory === cat && styles.filterTextActive]}>{cat}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+
               <View style={styles.itemsGrid}>
-                {marketItems.map(item => (
-                  <View key={item.id} style={styles.itemCard}>
-                    <View style={styles.itemCardTop}>
-                      <View style={styles.iconBox}>
+                {displayedItems.length > 0 ? (
+                  displayedItems.map(item => (
+                    <TouchableOpacity 
+                      key={item.id} 
+                      style={styles.compactCard}
+                      onPress={() => openAdDetails(item)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.compactIconBox}>
                         <Text style={styles.iconText}>{item.icon}</Text>
                       </View>
-                      <View style={styles.itemCardInfo}>
-                        <Text style={styles.itemBreed} numberOfLines={1}>{item.breed}</Text>
-                        <Text style={styles.itemQty}>{item.qty} sujet(s)</Text>
+                      <View style={styles.compactInfo}>
+                        <Text style={styles.compactTitle} numberOfLines={1}>{item.title}</Text>
+                        <Text style={styles.compactSub}>{item.qty} sujet(s) - {item.espece}</Text>
+                        <Text style={styles.compactPrice}>{(item.price).toLocaleString()} F</Text>
                       </View>
-                      <Text style={styles.itemPrice}>
-                        {(item.price).toLocaleString()} F
-                      </Text>
-                    </View>
-
-                    <Text style={styles.itemTitle}>{item.title}</Text>
-                    <Text style={styles.itemDesc} numberOfLines={2}>{item.desc}</Text>
-                    
-                    <View style={styles.itemMeta}>
-                      <View style={styles.metaRow}>
-                        <Ionicons name="location-outline" size={14} color="#64748B" />
-                        <Text style={styles.metaText} numberOfLines={1}>{item.location}</Text>
-                      </View>
-                      <View style={styles.metaRow}>
-                        <Ionicons name="person-outline" size={14} color="#64748B" />
-                        <Text style={styles.metaText} numberOfLines={1}>Vendeur : {item.seller}</Text>
-                      </View>
-                    </View>
-
-                    <TouchableOpacity 
-                      style={styles.btnBuy}
-                      onPress={() => handleBuyItem(item)}
-                    >
-                      <Ionicons name="cart-outline" size={16} color="#FFFFFF" />
-                      <Text style={styles.btnBuyText}>Acheter</Text>
+                      <Ionicons name="chevron-forward" size={20} color="#CBD5E1" />
                     </TouchableOpacity>
+                  ))
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Aucune annonce ne correspond à vos critères.</Text>
                   </View>
-                ))}
+                )}
+
+                {hasMore && (
+                  <TouchableOpacity style={styles.btnLoadMore} onPress={loadMore}>
+                    <Text style={styles.btnLoadMoreText}>Afficher plus d'annonces</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           ) : (
@@ -241,7 +286,7 @@ export default function MarketplaceScreen() {
                           <View>
                             <Text style={styles.matureBreed}>{animal.race}</Text>
                             <Text style={styles.matureMeta}>
-                              {animal.nombre} sujet(s) • Âge : {animal.age} mois • {farmName}
+                              {animal.nombre} sujet(s) - Âge : {animal.age} mois - {farmName}
                             </Text>
                           </View>
                         </View>
@@ -250,7 +295,7 @@ export default function MarketplaceScreen() {
                           style={styles.btnPublish}
                           onPress={() => handleOpenSellModal(animal)}
                         >
-                          <Text style={styles.btnPublishText}>Mettre en vente</Text>
+                          <Text style={styles.btnPublishText}>Vendre</Text>
                         </TouchableOpacity>
                       </View>
                     );
@@ -284,7 +329,7 @@ export default function MarketplaceScreen() {
               <ScrollView contentContainerStyle={styles.modalForm}>
                 <View style={styles.previewBox}>
                   <Text style={styles.previewText}>
-                    📦 En cours de mise en vente : Lot de {selectedAnimalToSell.nombre} {selectedAnimalToSell.espece}(s) ({selectedAnimalToSell.race})
+                    📦 En cours de vente : Lot de {selectedAnimalToSell.nombre} {selectedAnimalToSell.espece}(s) ({selectedAnimalToSell.race})
                   </Text>
                 </View>
 
@@ -304,7 +349,7 @@ export default function MarketplaceScreen() {
                   <Text style={styles.formLabel}>Description de l'annonce</Text>
                   <TextInput
                     style={[styles.formInput, styles.formTextarea]}
-                    placeholder="Précisez l'état de santé, le poids moyen des sujets, les conditions d'enlèvement..."
+                    placeholder="Précisez l'état de santé, le poids moyen, les conditions d'enlèvement..."
                     placeholderTextColor="#64748B"
                     multiline={true}
                     numberOfLines={4}
@@ -321,6 +366,56 @@ export default function MarketplaceScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* ================= AD DETAILS MODAL ================= */}
+      <Modal visible={detailsModalVisible} animationType="fade" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContentDetails}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Détails de l'annonce</Text>
+              <TouchableOpacity onPress={() => setDetailsModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#0F172A" />
+              </TouchableOpacity>
+            </View>
+            
+            {selectedAd && (
+              <ScrollView contentContainerStyle={styles.adDetailsScroll}>
+                <View style={styles.adHeaderBox}>
+                  <Text style={styles.adBigIcon}>{selectedAd.icon}</Text>
+                  <Text style={styles.adTitle}>{selectedAd.title}</Text>
+                  <Text style={styles.adPrice}>{(selectedAd.price).toLocaleString()} F</Text>
+                </View>
+
+                <View style={styles.adInfoBox}>
+                  <Text style={styles.adDesc}>{selectedAd.desc}</Text>
+                  
+                  <View style={styles.adMetaRow}>
+                    <Ionicons name="pricetag-outline" size={18} color="#64748B" />
+                    <Text style={styles.adMetaText}>Espèce : {selectedAd.espece}</Text>
+                  </View>
+                  <View style={styles.adMetaRow}>
+                    <Ionicons name="location-outline" size={18} color="#64748B" />
+                    <Text style={styles.adMetaText}>{selectedAd.location}</Text>
+                  </View>
+                  <View style={styles.adMetaRow}>
+                    <Ionicons name="person-outline" size={18} color="#64748B" />
+                    <Text style={styles.adMetaText}>Vendeur : {selectedAd.seller}</Text>
+                  </View>
+                </View>
+
+                <TouchableOpacity 
+                  style={styles.btnSubmit}
+                  onPress={() => handleBuyItem(selectedAd)}
+                >
+                  <Ionicons name="cart" size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                  <Text style={styles.btnSubmitText}>Acheter</Text>
+                </TouchableOpacity>
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -339,7 +434,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
   },
   title: {
     fontSize: 22,
@@ -348,7 +446,7 @@ const styles = StyleSheet.create({
   },
   marketTabs: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8FAFC',
     borderRadius: 10,
     padding: 2,
     borderWidth: 1,
@@ -376,6 +474,50 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     gap: 16,
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginBottom: 8,
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 15,
+    color: '#0F172A',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    maxHeight: 40,
+  },
+  filterChip: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginRight: 8,
+    alignSelf: 'flex-start',
+  },
+  filterChipActive: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981',
+  },
+  filterText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  filterTextActive: {
+    color: '#FFFFFF',
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
@@ -388,98 +530,64 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   buyView: {
-    gap: 16,
+    gap: 4,
   },
   sellView: {
     gap: 16,
   },
   itemsGrid: {
-    gap: 16,
+    gap: 12,
   },
-  itemCard: {
+  compactCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 16,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
-  itemCardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  iconBox: {
-    width: 44,
-    height: 44,
+  compactIconBox: {
+    width: 48,
+    height: 48,
     borderRadius: 12,
     backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 12,
   },
   iconText: {
     fontSize: 24,
   },
-  itemCardInfo: {
+  compactInfo: {
     flex: 1,
-    gap: 2,
   },
-  itemBreed: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#0F172A',
-  },
-  itemQty: {
-    fontSize: 12,
-    color: '#64748B',
-  },
-  itemPrice: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#10B981',
-  },
-  itemTitle: {
+  compactTitle: {
     fontSize: 15,
     fontWeight: '700',
     color: '#0F172A',
-    marginTop: 14,
+    marginBottom: 2,
   },
-  itemDesc: {
+  compactSub: {
     fontSize: 13,
-    color: '#94A3B8',
-    marginTop: 6,
-    lineHeight: 18,
-  },
-  itemMeta: {
-    flexDirection: 'column',
-    gap: 8,
-    marginTop: 14,
-    paddingTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  metaText: {
-    fontSize: 12,
     color: '#64748B',
-    fontWeight: '500',
+    marginBottom: 4,
   },
-  btnBuy: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#10B981',
+  compactPrice: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#10B981',
+  },
+  btnLoadMore: {
+    backgroundColor: '#F1F5F9',
+    paddingVertical: 14,
     borderRadius: 12,
-    paddingVertical: 12,
-    marginTop: 14,
+    alignItems: 'center',
+    marginTop: 8,
   },
-  btnBuyText: {
-    color: '#FFFFFF',
-    fontSize: 13,
+  btnLoadMoreText: {
+    color: '#475569',
+    fontSize: 14,
     fontWeight: '700',
   },
   matureList: {
@@ -516,30 +624,17 @@ const styles = StyleSheet.create({
   btnPublish: {
     backgroundColor: '#3B82F6',
     borderRadius: 8,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 8,
   },
   btnPublishText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
-  },
-  previewBox: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  previewText: {
-    color: '#10B981',
-    fontSize: 12,
-    fontWeight: '600',
-    lineHeight: 18,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: 'rgba(15, 23, 42, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -548,11 +643,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     padding: 24,
     maxHeight: '80%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
+  },
+  modalContentDetails: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    maxHeight: '90%',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -569,6 +666,67 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingBottom: 40,
   },
+  adDetailsScroll: {
+    paddingBottom: 40,
+  },
+  adHeaderBox: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  adBigIcon: {
+    fontSize: 64,
+    marginBottom: 12,
+  },
+  adTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#0F172A',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  adPrice: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#10B981',
+  },
+  adInfoBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    marginBottom: 24,
+    gap: 12,
+  },
+  adDesc: {
+    fontSize: 15,
+    color: '#475569',
+    lineHeight: 22,
+    marginBottom: 8,
+  },
+  adMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  adMetaText: {
+    fontSize: 14,
+    color: '#0F172A',
+    fontWeight: '500',
+  },
+  previewBox: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  previewText: {
+    color: '#10B981',
+    fontSize: 13,
+    fontWeight: '600',
+    lineHeight: 18,
+  },
   formGroup: {
     gap: 8,
   },
@@ -582,25 +740,26 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     color: '#0F172A',
-    fontSize: 14,
+    fontSize: 15,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   formTextarea: {
-    height: 80,
+    height: 100,
     textAlignVertical: 'top',
   },
   btnSubmit: {
+    flexDirection: 'row',
     backgroundColor: '#10B981',
     borderRadius: 14,
-    paddingVertical: 14,
+    paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 10,
+    justifyContent: 'center',
   },
   btnSubmitText: {
     color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
   },
   emptyContainer: {
     padding: 32,
@@ -608,11 +767,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    gap: 12,
+    marginTop: 20,
   },
   emptyText: {
     color: '#64748B',
-    fontSize: 13,
+    fontSize: 14,
     textAlign: 'center',
+    lineHeight: 20,
   },
 });

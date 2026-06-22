@@ -154,7 +154,6 @@ export default function AlertsScreen() {
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Active alerts List */}
-          <Text style={styles.sectionTitle}>Historique des alertes sanitaires</Text>
           <View style={styles.alertsContainer}>
             {alerts.map(alert => {
               const farmName = farms.find(f => f.id === alert.ferme_id)?.nomferme || 'Ferme';
@@ -226,7 +225,7 @@ export default function AlertsScreen() {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Détails de l'Alerte</Text>
                 <TouchableOpacity onPress={() => setDetailAlert(null)}>
-                  <Ionicons name="close" size={24} color="#FFFFFF" />
+                  <Ionicons name="close" size={24} color="#0F172A" />
                 </TouchableOpacity>
               </View>
 
@@ -315,12 +314,11 @@ export default function AlertsScreen() {
                   </View>
                 )}
 
-                {/* IF ALERTE NON TRAITEE & USER IS VET: Show Actions */}
                 {detailAlert.status === 'Non traitée' && userRole === 'vet' && (
                   <View style={styles.vetActions}>
                     <TouchableOpacity 
                       style={styles.btnVetCall}
-                      onPress={() => setMeetingModalVisible(true)}
+                      onPress={() => { setDetailAlert(null); setTimeout(() => setMeetingModalVisible(true), 300); }}
                     >
                       <Ionicons name="videocam-outline" size={18} color="#FFFFFF" />
                       <Text style={styles.btnVetText}>Visio</Text>
@@ -328,7 +326,7 @@ export default function AlertsScreen() {
 
                     <TouchableOpacity 
                       style={styles.btnVetTreat}
-                      onPress={() => setDiagModalVisible(true)}
+                      onPress={() => { setDetailAlert(null); setTimeout(() => setDiagModalVisible(true), 300); }}
                     >
                       <Ionicons name="checkbox-outline" size={18} color="#FFFFFF" />
                       <Text style={styles.btnVetText}>Diagnostic</Text>
@@ -336,7 +334,7 @@ export default function AlertsScreen() {
 
                     <TouchableOpacity 
                       style={styles.btnVetPhysical}
-                      onPress={() => setPhysicalModalVisible(true)}
+                      onPress={() => { setDetailAlert(null); setTimeout(() => setPhysicalModalVisible(true), 300); }}
                     >
                       <Ionicons name="car-outline" size={18} color="#FFFFFF" />
                       <Text style={styles.btnVetText}>Déplacement</Text>
@@ -356,7 +354,7 @@ export default function AlertsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Signaler Anomalie Santé</Text>
               <TouchableOpacity onPress={() => setCreateModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -471,7 +469,7 @@ export default function AlertsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Programmer Téléconsultation</Text>
               <TouchableOpacity onPress={() => setMeetingModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -504,7 +502,7 @@ export default function AlertsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Diagnostiquer l'Animal</Text>
               <TouchableOpacity onPress={() => setDiagModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -552,7 +550,7 @@ export default function AlertsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Intervention Physique</Text>
               <TouchableOpacity onPress={() => setPhysicalModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#FFFFFF" />
+                <Ionicons name="close" size={24} color="#0F172A" />
               </TouchableOpacity>
             </View>
 
@@ -695,7 +693,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
   },
   title: {
     fontSize: 22,
@@ -830,7 +831,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
-    maxHeight: '90%',
+    paddingBottom: Platform.OS === 'ios' ? 40 : 80,
+    maxHeight: '85%',
   },
   modalHeader: {
     flexDirection: 'row',
