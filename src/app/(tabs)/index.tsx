@@ -337,7 +337,7 @@ export default function DashboardScreen() {
                     <Ionicons name="cash" size={20} color="#F59E0B" />
                   </View>
                   <Text style={styles.statValue}>{vetUnpaidInvoices.length}</Text>
-                  <Text style={styles.statLabel}>Impayés</Text>
+                  <Text style={styles.statLabel}>Comptabilité</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
@@ -358,7 +358,7 @@ export default function DashboardScreen() {
                 <Text style={styles.sectionTitle}>
                   {vetActiveTab === 'urgencies' && "Urgences en attente"}
                   {vetActiveTab === 'visios' && "Consultations vidéo"}
-                  {vetActiveTab === 'unpaid' && "Factures impayées"}
+                  {vetActiveTab === 'unpaid' && "Comptabilité"}
                   {vetActiveTab === 'treated' && "Cas traités"}
                 </Text>
               </View>
