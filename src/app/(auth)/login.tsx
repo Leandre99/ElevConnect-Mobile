@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
       <StatusBar style="dark" />
@@ -122,8 +122,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: 24,
   },
   backButton: {
     width: 44,
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 24,
+    marginBottom: 20,
     borderWidth: 1,
     borderColor: '#E2E8F0',
     shadowColor: '#94A3B8',
@@ -143,7 +144,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   header: {
-    marginBottom: 32,
+    marginTop: 20,
+    marginBottom: 40,
   },
   title: {
     fontSize: 28,
@@ -222,7 +224,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 'auto',
+    paddingTop: 40,
   },
   footerText: {
     color: '#64748B',

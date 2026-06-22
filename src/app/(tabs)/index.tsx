@@ -12,6 +12,9 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { userRole, setUserRole, farms, animals, tasks, alerts, invoices, toggleTask } = useApp();
 
+  // Breeder Active Tab State
+  const [breederActiveTab, setBreederActiveTab] = useState<'farms' | 'animals' | 'tasks' | 'alerts'>('farms');
+
   // Vet Active Tab State
   const [vetActiveTab, setVetActiveTab] = useState<'urgencies' | 'visios' | 'unpaid' | 'treated'>('urgencies');
 
@@ -51,25 +54,37 @@ export default function DashboardScreen() {
           {userRole === 'breeder' ? (
             /* ================= BREEDER DASHBOARD ================= */
             <View style={styles.dashboardView}>
-              {/* Stat Grid */}
+              {/* Stat Grid - Clickable to switch tabs */}
               <View style={styles.statsGrid}>
-                <View style={styles.statCard}>
+                <TouchableOpacity 
+                  style={[styles.statCard, breederActiveTab === 'farms' && styles.statCardActive]} 
+                  onPress={() => setBreederActiveTab('farms')}
+                  activeOpacity={0.7}
+                >
                   <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
                     <Ionicons name="business" size={20} color="#10B981" />
                   </View>
                   <Text style={styles.statValue}>{farms.length}</Text>
                   <Text style={styles.statLabel}>Fermes</Text>
-                </View>
+                </TouchableOpacity>
 
-                <View style={styles.statCard}>
+                <TouchableOpacity 
+                  style={[styles.statCard, breederActiveTab === 'animals' && styles.statCardActive]} 
+                  onPress={() => setBreederActiveTab('animals')}
+                  activeOpacity={0.7}
+                >
                   <View style={[styles.statIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
                     <Ionicons name="logo-octocat" size={20} color="#3B82F6" />
                   </View>
                   <Text style={styles.statValue}>{totalAnimals}</Text>
                   <Text style={styles.statLabel}>Bêtes</Text>
-                </View>
+                </TouchableOpacity>
 
-                <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/tasks')}>
+                <TouchableOpacity 
+                  style={[styles.statCard, breederActiveTab === 'tasks' && styles.statCardActive]} 
+                  onPress={() => setBreederActiveTab('tasks')}
+                  activeOpacity={0.7}
+                >
                   <View style={[styles.statIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
                     <Ionicons name="checkbox" size={20} color="#F59E0B" />
                   </View>
@@ -77,7 +92,11 @@ export default function DashboardScreen() {
                   <Text style={styles.statLabel}>Tâches</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/alerts')}>
+                <TouchableOpacity 
+                  style={[styles.statCard, breederActiveTab === 'alerts' && styles.statCardActive]} 
+                  onPress={() => setBreederActiveTab('alerts')}
+                  activeOpacity={0.7}
+                >
                   <View style={[styles.statIconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
                     <Ionicons name="warning" size={20} color="#EF4444" />
                   </View>
@@ -86,106 +105,198 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Farms Section */}
+              {/* Dynamic Content Section based on selected tab */}
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Vos Exploitations</Text>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/farms')}>
-                  <Text style={styles.seeAllLink}>Gérer</Text>
+                <Text style={styles.sectionTitle}>
+                  {breederActiveTab === 'farms' && "Vos Exploitations"}
+                  {breederActiveTab === 'animals' && "Aperçu de votre cheptel"}
+                  {breederActiveTab === 'tasks' && "Tâches du jour"}
+                  {breederActiveTab === 'alerts' && "Alertes en cours"}
+                </Text>
+                <TouchableOpacity onPress={() => router.push(
+                  breederActiveTab === 'farms' ? '/(tabs)/farms' : 
+                  breederActiveTab === 'tasks' ? '/(tabs)/tasks' : 
+                  '/(tabs)/alerts'
+                )}>
+                  {breederActiveTab !== 'animals' && <Text style={styles.seeAllLink}>Gérer</Text>}
                 </TouchableOpacity>
               </View>
 
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false} 
-                contentContainerStyle={styles.farmsCarousel}
-                snapToInterval={width * 0.76 + 16}
-                decelerationRate="fast"
-              >
-                {farms.map(farm => {
-                  const farmAnimals = animals.filter(a => a.ferme_id === farm.id);
-                  const animalCount = farmAnimals.reduce((acc, curr) => acc + curr.nombre, 0);
-
-                  return (
-                    <TouchableOpacity 
-                      key={farm.id}
-                      style={styles.farmCarouselCard}
-                      activeOpacity={0.9}
-                      onPress={() => router.push({ pathname: '/(tabs)/farms', params: { activeFarmId: farm.id } })}
+              <View style={styles.dynamicContainer}>
+                {/* 1. FARMS TAB */}
+                {breederActiveTab === 'farms' && (
+                  farms.length > 0 ? (
+                    <ScrollView 
+                      horizontal 
+                      showsHorizontalScrollIndicator={false} 
+                      contentContainerStyle={styles.farmsCarousel}
+                      snapToInterval={width * 0.76 + 16}
+                      decelerationRate="fast"
                     >
-                      <View style={styles.farmCardTop}>
-                        <Text style={styles.farmCardName}>{farm.nomferme}</Text>
-                        <View style={[styles.badge, farm.is_active ? styles.badgeActive : styles.badgeInactive]}>
-                          <Text style={[styles.badgeText, !farm.is_active && { color: '#EF4444' }]}>
-                            {farm.is_active ? 'Actif' : 'Inactif'}
-                          </Text>
-                        </View>
-                      </View>
-                      
-                      <Text style={styles.farmCardDesc} numberOfLines={2}>{farm.description}</Text>
-                      
-                      <View style={styles.farmCardBottom}>
-                        <View style={styles.farmMeta}>
-                          <Ionicons name="location-outline" size={14} color="#64748B" />
-                          <Text style={styles.farmMetaText} numberOfLines={1}>{farm.adresse}</Text>
-                        </View>
-                        <View style={styles.farmMeta}>
-                          <Ionicons name="paw-outline" size={14} color="#10B981" />
-                          <Text style={[styles.farmMetaText, { color: '#10B981', fontWeight: 'bold' }]}>
-                            {animalCount} bêtes
-                          </Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                })}
-              </ScrollView>
+                      {farms.map(farm => {
+                        const farmAnimals = animals.filter(a => a.ferme_id === farm.id);
+                        const animalCount = farmAnimals.reduce((acc, curr) => acc + curr.nombre, 0);
 
-              {/* Today's Tasks Summary */}
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Tâches d'aujourd'hui</Text>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/tasks')}>
-                  <Text style={styles.seeAllLink}>Calendrier</Text>
-                </TouchableOpacity>
-              </View>
+                        return (
+                          <TouchableOpacity 
+                            key={farm.id}
+                            style={styles.farmCarouselCard}
+                            activeOpacity={0.9}
+                            onPress={() => router.push({ pathname: '/(tabs)/farms', params: { activeFarmId: farm.id } })}
+                          >
+                            <View style={styles.farmCardTop}>
+                              <Text style={styles.farmCardName}>{farm.nomferme}</Text>
+                              <View style={[styles.badge, farm.is_active ? styles.badgeActive : styles.badgeInactive]}>
+                                <Text style={[styles.badgeText, !farm.is_active && { color: '#EF4444' }]}>
+                                  {farm.is_active ? 'Actif' : 'Inactif'}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text style={styles.farmCardDesc} numberOfLines={2}>{farm.description}</Text>
+                            <View style={styles.farmCardBottom}>
+                              <View style={styles.farmMeta}>
+                                <Ionicons name="location-outline" size={14} color="#64748B" />
+                                <Text style={styles.farmMetaText} numberOfLines={1}>{farm.adresse}</Text>
+                              </View>
+                              <View style={styles.farmMeta}>
+                                <Ionicons name="paw-outline" size={14} color="#10B981" />
+                                <Text style={[styles.farmMetaText, { color: '#10B981', fontWeight: 'bold' }]}>
+                                  {animalCount} bêtes
+                                </Text>
+                              </View>
+                            </View>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </ScrollView>
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucune ferme trouvée.</Text>
+                    </View>
+                  )
+                )}
 
-              <View style={styles.tasksContainer}>
-                {tasks.slice(0, 3).map(task => (
-                  <View key={task.id} style={styles.taskItem}>
-                    <TouchableOpacity 
-                      style={[styles.taskCheckbox, task.status === 'completed' && styles.taskCheckboxChecked]}
-                      onPress={() => toggleTask(task.id)}
-                    >
-                      {task.status === 'completed' && (
-                        <Ionicons name="checkmark" size={14} color="#FFFFFF" />
-                      )}
-                    </TouchableOpacity>
-                    <View style={styles.taskInfo}>
-                      <Text style={[styles.taskName, task.status === 'completed' && styles.taskCompletedText]}>
-                        {task.nomtache}
-                      </Text>
-                      <Text style={styles.taskMeta}>
-                        {task.espece} • {task.race} • Qte: {task.quantite}
-                      </Text>
+                {/* 2. ANIMALS TAB */}
+                {breederActiveTab === 'animals' && (
+                  animals.length > 0 ? (
+                    animals.map(animal => {
+                      const farmName = farms.find(f => f.id === animal.ferme_id)?.nomferme || 'Inconnue';
+                      return (
+                        <View key={animal.id} style={styles.urgencyCard}>
+                          <View style={styles.urgencyCardTop}>
+                            <View style={styles.urgencyInfo}>
+                              <Text style={styles.urgencySubject}>{animal.espece}</Text>
+                              <Text style={styles.urgencyMeta}>Race: {animal.race}</Text>
+                            </View>
+                            <View style={[styles.priorityBadge, { backgroundColor: '#EFF6FF' }]}>
+                              <Text style={[styles.priorityText, { color: '#3B82F6' }]}>{animal.nombre} bêtes</Text>
+                            </View>
+                          </View>
+                          <View style={styles.urgencyCardBottom}>
+                            <Text style={styles.urgencyDate}>Ferme: {farmName}</Text>
+                          </View>
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucun animal enregistré.</Text>
                     </View>
-                    <View style={[
-                      styles.taskTypeBadge,
-                      task.type === 'alimentation' && { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
-                      task.type === 'vaccin' && { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
-                      task.type === 'soin' && { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
-                      task.type === 'controle' && { backgroundColor: '#F1F5F9' },
-                    ]}>
-                      <Text style={[
-                        styles.taskTypeText,
-                        task.type === 'alimentation' && { color: '#3B82F6' },
-                        task.type === 'vaccin' && { color: '#F59E0B' },
-                        task.type === 'soin' && { color: '#10B981' },
-                        task.type === 'controle' && { color: '#64748B' },
-                      ]}>
-                        {task.type.toUpperCase()}
-                      </Text>
+                  )
+                )}
+
+                {/* 3. TASKS TAB */}
+                {breederActiveTab === 'tasks' && (
+                  tasks.length > 0 ? (
+                    <View style={styles.tasksContainer}>
+                      {tasks.map(task => (
+                        <View key={task.id} style={styles.taskItem}>
+                          <TouchableOpacity 
+                            style={[styles.taskCheckbox, task.status === 'completed' && styles.taskCheckboxChecked]}
+                            onPress={() => toggleTask(task.id)}
+                          >
+                            {task.status === 'completed' && (
+                              <Ionicons name="checkmark" size={14} color="#FFFFFF" />
+                            )}
+                          </TouchableOpacity>
+                          <View style={styles.taskInfo}>
+                            <Text style={[styles.taskName, task.status === 'completed' && styles.taskCompletedText]}>
+                              {task.nomtache}
+                            </Text>
+                            <Text style={styles.taskMeta}>
+                              {task.espece} • {task.race} • Qte: {task.quantite}
+                            </Text>
+                          </View>
+                          <View style={[
+                            styles.taskTypeBadge,
+                            task.type === 'alimentation' && { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+                            task.type === 'vaccin' && { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
+                            task.type === 'soin' && { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+                            task.type === 'controle' && { backgroundColor: '#F1F5F9' },
+                          ]}>
+                            <Text style={[
+                              styles.taskTypeText,
+                              task.type === 'alimentation' && { color: '#3B82F6' },
+                              task.type === 'vaccin' && { color: '#F59E0B' },
+                              task.type === 'soin' && { color: '#10B981' },
+                              task.type === 'controle' && { color: '#64748B' },
+                            ]}>
+                              {task.type.toUpperCase()}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
                     </View>
-                  </View>
-                ))}
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucune tâche pour aujourd'hui 🎉</Text>
+                    </View>
+                  )
+                )}
+
+                {/* 4. ALERTS TAB */}
+                {breederActiveTab === 'alerts' && (
+                  activeAlerts.length > 0 ? (
+                    activeAlerts.map(alert => (
+                      <TouchableOpacity 
+                        key={alert.id}
+                        style={styles.urgencyCard}
+                        onPress={() => router.push('/(tabs)/alerts')}
+                      >
+                        <View style={styles.urgencyCardTop}>
+                          <View style={styles.urgencyInfo}>
+                            <Text style={styles.urgencySubject}>Alerte en cours</Text>
+                            <Text style={styles.urgencyMeta}>{alert.espece} • {alert.race}</Text>
+                          </View>
+                          <View style={[
+                            styles.priorityBadge, 
+                            alert.priority === 'high' && styles.priorityHigh,
+                            alert.priority === 'medium' && styles.priorityMedium,
+                            alert.priority === 'low' && styles.priorityLow,
+                          ]}>
+                            <Text style={[
+                              styles.priorityText,
+                              alert.priority === 'high' && { color: '#EF4444' },
+                              alert.priority === 'medium' && { color: '#F59E0B' },
+                              alert.priority === 'low' && { color: '#3B82F6' }
+                            ]}>{alert.priority.toUpperCase()}</Text>
+                          </View>
+                        </View>
+                        <Text style={styles.urgencyDescription} numberOfLines={2}>
+                          {alert.description}
+                        </Text>
+                        <View style={styles.urgencyCardBottom}>
+                          <Text style={styles.urgencyDate}>Envoyé le {alert.date}</Text>
+                          <Text style={styles.urgencyActionText}>Détails →</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Tout va bien, aucune alerte de santé.</Text>
+                    </View>
+                  )
+                )}
               </View>
             </View>
           ) : (
