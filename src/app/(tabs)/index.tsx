@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { useApp } from '@/context/AppContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 const { width } = Dimensions.get('window');
 
 export default function DashboardScreen() {
   const router = useRouter();
   const { userRole, setUserRole, farms, animals, tasks, alerts, invoices, toggleTask } = useApp();
+
+  // Vet Active Tab State
+  const [vetActiveTab, setVetActiveTab] = useState<'urgencies' | 'visios' | 'unpaid' | 'treated'>('urgencies');
 
   // Compute Stats for Breeder
   const totalAnimals = animals.reduce((acc, curr) => acc + curr.nombre, 0);
@@ -18,13 +22,20 @@ export default function DashboardScreen() {
 
   // Compute Stats for Vet
   const vetAlertsToTreat = alerts.filter(a => a.status === 'Non traitée');
+  const vetTreatedAlerts = alerts.filter(a => a.status === 'Traitée');
   const vetUnpaidInvoices = invoices.filter(i => i.status === 'unpaid');
+  
+  // Mock Visios
+  const mockVisios = [
+    { id: 'v1', time: "Aujourd'hui à 16:30", subject: "Léthargie - Ferme GreenValley", type: "Poulets" }
+  ];
 
   // Today's Date representation
   const todayStr = '10 Juin 2026';
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         {/* Top Header & Role Switcher */}
         <View style={styles.header}>
@@ -33,22 +44,6 @@ export default function DashboardScreen() {
             <Text style={styles.headerTitle}>
               {userRole === 'breeder' ? 'Bonjour, Jean 👋' : 'Bonjour, Dr. Diallo 🩺'}
             </Text>
-          </View>
-          
-          {/* Interactive Role Switcher Pill */}
-          <View style={styles.roleSwitcher}>
-            <TouchableOpacity 
-              style={[styles.rolePill, userRole === 'breeder' && styles.rolePillActive]}
-              onPress={() => setUserRole('breeder')}
-            >
-              <Text style={[styles.rolePillText, userRole === 'breeder' && styles.rolePillTextActive]}>Éleveur</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.rolePill, userRole === 'vet' && styles.rolePillActive]}
-              onPress={() => setUserRole('vet')}
-            >
-              <Text style={[styles.rolePillText, userRole === 'vet' && styles.rolePillTextActive]}>Véto</Text>
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -59,7 +54,7 @@ export default function DashboardScreen() {
               {/* Stat Grid */}
               <View style={styles.statsGrid}>
                 <View style={styles.statCard}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
                     <Ionicons name="business" size={20} color="#10B981" />
                   </View>
                   <Text style={styles.statValue}>{farms.length}</Text>
@@ -67,7 +62,7 @@ export default function DashboardScreen() {
                 </View>
 
                 <View style={styles.statCard}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.15)' }]}>
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.1)' }]}>
                     <Ionicons name="logo-octocat" size={20} color="#3B82F6" />
                   </View>
                   <Text style={styles.statValue}>{totalAnimals}</Text>
@@ -75,7 +70,7 @@ export default function DashboardScreen() {
                 </View>
 
                 <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/tasks')}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.15)' }]}>
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
                     <Ionicons name="checkbox" size={20} color="#F59E0B" />
                   </View>
                   <Text style={styles.statValue}>{pendingTasks.length}</Text>
@@ -83,7 +78,7 @@ export default function DashboardScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/alerts')}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
                     <Ionicons name="warning" size={20} color="#EF4444" />
                   </View>
                   <Text style={styles.statValue}>{activeAlerts.length}</Text>
@@ -120,7 +115,9 @@ export default function DashboardScreen() {
                       <View style={styles.farmCardTop}>
                         <Text style={styles.farmCardName}>{farm.nomferme}</Text>
                         <View style={[styles.badge, farm.is_active ? styles.badgeActive : styles.badgeInactive]}>
-                          <Text style={styles.badgeText}>{farm.is_active ? 'Actif' : 'Inactif'}</Text>
+                          <Text style={[styles.badgeText, !farm.is_active && { color: '#EF4444' }]}>
+                            {farm.is_active ? 'Actif' : 'Inactif'}
+                          </Text>
                         </View>
                       </View>
                       
@@ -128,7 +125,7 @@ export default function DashboardScreen() {
                       
                       <View style={styles.farmCardBottom}>
                         <View style={styles.farmMeta}>
-                          <Ionicons name="location-outline" size={14} color="#94A3B8" />
+                          <Ionicons name="location-outline" size={14} color="#64748B" />
                           <Text style={styles.farmMetaText} numberOfLines={1}>{farm.adresse}</Text>
                         </View>
                         <View style={styles.farmMeta}>
@@ -172,17 +169,17 @@ export default function DashboardScreen() {
                     </View>
                     <View style={[
                       styles.taskTypeBadge,
-                      task.type === 'alimentation' && { backgroundColor: 'rgba(59, 130, 246, 0.15)' },
-                      task.type === 'vaccin' && { backgroundColor: 'rgba(245, 158, 11, 0.15)' },
-                      task.type === 'soin' && { backgroundColor: 'rgba(16, 185, 129, 0.15)' },
-                      task.type === 'controle' && { backgroundColor: 'rgba(148, 163, 184, 0.15)' },
+                      task.type === 'alimentation' && { backgroundColor: 'rgba(59, 130, 246, 0.1)' },
+                      task.type === 'vaccin' && { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
+                      task.type === 'soin' && { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+                      task.type === 'controle' && { backgroundColor: '#F1F5F9' },
                     ]}>
                       <Text style={[
                         styles.taskTypeText,
                         task.type === 'alimentation' && { color: '#3B82F6' },
                         task.type === 'vaccin' && { color: '#F59E0B' },
                         task.type === 'soin' && { color: '#10B981' },
-                        task.type === 'controle' && { color: '#94A3B8' },
+                        task.type === 'controle' && { color: '#64748B' },
                       ]}>
                         {task.type.toUpperCase()}
                       </Text>
@@ -194,111 +191,196 @@ export default function DashboardScreen() {
           ) : (
             /* ================= VETERINARIAN DASHBOARD ================= */
             <View style={styles.dashboardView}>
-              {/* Stat Grid */}
+              {/* Stat Grid - Clickable to switch tabs */}
               <View style={styles.statsGrid}>
-                <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/alerts')}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
+                <TouchableOpacity 
+                  style={[styles.statCard, vetActiveTab === 'urgencies' && styles.statCardActive]} 
+                  onPress={() => setVetActiveTab('urgencies')}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(239, 68, 68, 0.1)' }]}>
                     <Ionicons name="warning" size={20} color="#EF4444" />
                   </View>
                   <Text style={styles.statValue}>{vetAlertsToTreat.length}</Text>
                   <Text style={styles.statLabel}>Urgences</Text>
                 </TouchableOpacity>
 
-                <View style={styles.statCard}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(139, 92, 246, 0.15)' }]}>
+                <TouchableOpacity 
+                  style={[styles.statCard, vetActiveTab === 'visios' && styles.statCardActive]} 
+                  onPress={() => setVetActiveTab('visios')}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(139, 92, 246, 0.1)' }]}>
                     <Ionicons name="videocam" size={20} color="#8B5CF6" />
                   </View>
-                  <Text style={styles.statValue}>1</Text>
+                  <Text style={styles.statValue}>{mockVisios.length}</Text>
                   <Text style={styles.statLabel}>Visios</Text>
-                </View>
+                </TouchableOpacity>
 
-                <TouchableOpacity style={styles.statCard} onPress={() => router.push('/(tabs)/profile')}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.15)' }]}>
+                <TouchableOpacity 
+                  style={[styles.statCard, vetActiveTab === 'unpaid' && styles.statCardActive]} 
+                  onPress={() => setVetActiveTab('unpaid')}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(245, 158, 11, 0.1)' }]}>
                     <Ionicons name="cash" size={20} color="#F59E0B" />
                   </View>
                   <Text style={styles.statValue}>{vetUnpaidInvoices.length}</Text>
                   <Text style={styles.statLabel}>Impayés</Text>
                 </TouchableOpacity>
 
-                <View style={styles.statCard}>
-                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
+                <TouchableOpacity 
+                  style={[styles.statCard, vetActiveTab === 'treated' && styles.statCardActive]} 
+                  onPress={() => setVetActiveTab('treated')}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.statIconContainer, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
                     <Ionicons name="medical" size={20} color="#10B981" />
                   </View>
-                  <Text style={styles.statValue}>
-                    {alerts.filter(a => a.status === 'Traitée').length}
-                  </Text>
+                  <Text style={styles.statValue}>{vetTreatedAlerts.length}</Text>
                   <Text style={styles.statLabel}>Traités</Text>
-                </View>
-              </View>
-
-              {/* Urgences Section */}
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Alertes Éleveurs en Attente</Text>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/alerts')}>
-                  <Text style={styles.seeAllLink}>Tout voir</Text>
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.urgenciesContainer}>
-                {vetAlertsToTreat.length > 0 ? (
-                  vetAlertsToTreat.map(alert => (
-                    <TouchableOpacity 
-                      key={alert.id}
-                      style={styles.urgencyCard}
-                      onPress={() => router.push('/(tabs)/alerts')}
-                    >
-                      <View style={styles.urgencyCardTop}>
-                        <View style={styles.urgencyInfo}>
-                          <Text style={styles.urgencySubject}>Maladie / Symptômes suspects</Text>
-                          <Text style={styles.urgencyMeta}>{alert.espece} • {alert.race}</Text>
+              {/* Dynamic Content Section based on selected tab */}
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>
+                  {vetActiveTab === 'urgencies' && "Urgences en attente"}
+                  {vetActiveTab === 'visios' && "Consultations vidéo"}
+                  {vetActiveTab === 'unpaid' && "Factures impayées"}
+                  {vetActiveTab === 'treated' && "Cas traités"}
+                </Text>
+              </View>
+
+              <View style={styles.dynamicContainer}>
+                {/* 1. URGENCIES TAB */}
+                {vetActiveTab === 'urgencies' && (
+                  vetAlertsToTreat.length > 0 ? (
+                    vetAlertsToTreat.map(alert => (
+                      <TouchableOpacity 
+                        key={alert.id}
+                        style={styles.urgencyCard}
+                        onPress={() => router.push('/(tabs)/alerts')}
+                      >
+                        <View style={styles.urgencyCardTop}>
+                          <View style={styles.urgencyInfo}>
+                            <Text style={styles.urgencySubject}>Intervention Requise</Text>
+                            <Text style={styles.urgencyMeta}>{alert.espece} • {alert.race}</Text>
+                          </View>
+                          <View style={[
+                            styles.priorityBadge, 
+                            alert.priority === 'high' && styles.priorityHigh,
+                            alert.priority === 'medium' && styles.priorityMedium,
+                            alert.priority === 'low' && styles.priorityLow,
+                          ]}>
+                            <Text style={[
+                              styles.priorityText,
+                              alert.priority === 'high' && { color: '#EF4444' },
+                              alert.priority === 'medium' && { color: '#F59E0B' },
+                              alert.priority === 'low' && { color: '#3B82F6' }
+                            ]}>{alert.priority.toUpperCase()}</Text>
+                          </View>
                         </View>
-                        <View style={[
-                          styles.priorityBadge, 
-                          alert.priority === 'high' && styles.priorityHigh,
-                          alert.priority === 'medium' && styles.priorityMedium,
-                          alert.priority === 'low' && styles.priorityLow,
-                        ]}>
-                          <Text style={styles.priorityText}>{alert.priority.toUpperCase()}</Text>
+                        <Text style={styles.urgencyDescription} numberOfLines={2}>
+                          {alert.description}
+                        </Text>
+                        <View style={styles.urgencyCardBottom}>
+                          <Text style={styles.urgencyDate}>Reçu le {alert.date}</Text>
+                          <Text style={styles.urgencyActionText}>Voir l'alerte →</Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucune urgence en attente.</Text>
+                    </View>
+                  )
+                )}
+
+                {/* 2. VISIOS TAB */}
+                {vetActiveTab === 'visios' && (
+                  mockVisios.length > 0 ? (
+                    mockVisios.map(visio => (
+                      <View key={visio.id} style={styles.visioBanner}>
+                        <View style={styles.visioIconContainer}>
+                          <Ionicons name="videocam" size={24} color="#8B5CF6" />
+                        </View>
+                        <View style={styles.visioInfo}>
+                          <Text style={styles.visioTitle}>{visio.time}</Text>
+                          <Text style={styles.visioSubtitle}>{visio.subject}</Text>
+                        </View>
+                        <TouchableOpacity 
+                          style={styles.visioJoinBtn}
+                          onPress={() => router.push('/(tabs)/alerts')}
+                        >
+                          <Text style={styles.visioJoinBtnText}>Rejoindre</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucune visio programmée.</Text>
+                    </View>
+                  )
+                )}
+
+                {/* 3. UNPAID TAB */}
+                {vetActiveTab === 'unpaid' && (
+                  vetUnpaidInvoices.length > 0 ? (
+                    vetUnpaidInvoices.map(invoice => (
+                      <View key={invoice.id} style={styles.urgencyCard}>
+                        <View style={styles.urgencyCardTop}>
+                          <View style={styles.urgencyInfo}>
+                            <Text style={styles.urgencySubject}>Facture #{invoice.id.substring(0,8)}</Text>
+                            <Text style={styles.urgencyMeta}>{invoice.date}</Text>
+                          </View>
+                          <Text style={{ fontSize: 16, fontWeight: '800', color: '#F59E0B' }}>
+                            {invoice.amount.toLocaleString()} F
+                          </Text>
+                        </View>
+                        <Text style={styles.urgencyDescription} numberOfLines={2}>
+                          {invoice.description}
+                        </Text>
+                        <View style={styles.urgencyCardBottom}>
+                          <Text style={styles.urgencyDate}>En attente de paiement</Text>
                         </View>
                       </View>
-                      
-                      <Text style={styles.urgencyDescription} numberOfLines={2}>
-                        {alert.description}
-                      </Text>
-                      
-                      <View style={styles.urgencyCardBottom}>
-                        <Text style={styles.urgencyDate}>Reçu le {alert.date}</Text>
-                        <Text style={styles.urgencyActionText}>Intervenir →</Text>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucun impayé.</Text>
+                    </View>
+                  )
+                )}
+
+                {/* 4. TREATED TAB */}
+                {vetActiveTab === 'treated' && (
+                  vetTreatedAlerts.length > 0 ? (
+                    vetTreatedAlerts.map(alert => (
+                      <View key={alert.id} style={styles.urgencyCard}>
+                        <View style={styles.urgencyCardTop}>
+                          <View style={styles.urgencyInfo}>
+                            <Text style={styles.urgencySubject}>Cas Traité</Text>
+                            <Text style={styles.urgencyMeta}>{alert.espece} • {alert.race}</Text>
+                          </View>
+                          <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+                        </View>
+                        <Text style={styles.urgencyDescription} numberOfLines={2}>
+                          {alert.description}
+                        </Text>
+                        <View style={styles.urgencyCardBottom}>
+                          <Text style={styles.urgencyDate}>Traité le {alert.date}</Text>
+                        </View>
                       </View>
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>Aucune alerte en attente. Bon travail ! 🎉</Text>
-                  </View>
+                    ))
+                  ) : (
+                    <View style={styles.emptyContainer}>
+                      <Text style={styles.emptyText}>Aucun cas traité récemment.</Text>
+                    </View>
+                  )
                 )}
               </View>
 
-              {/* Consultation / Video Call Quick Banner */}
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Consultation Vidéo Programmée</Text>
-              </View>
-              
-              <View style={styles.visioBanner}>
-                <View style={styles.visioIconContainer}>
-                  <Ionicons name="videocam" size={28} color="#8B5CF6" />
-                </View>
-                <View style={styles.visioInfo}>
-                  <Text style={styles.visioTitle}>Aujourd'hui à 16:30</Text>
-                  <Text style={styles.visioSubtitle}>Léthargie - Ferme GreenValley (Poulets)</Text>
-                </View>
-                <TouchableOpacity 
-                  style={styles.visioJoinBtn}
-                  onPress={() => router.push('/(tabs)/alerts')}
-                >
-                  <Text style={styles.visioJoinBtnText}>Rejoindre</Text>
-                </TouchableOpacity>
-              </View>
             </View>
           )}
         </ScrollView>
@@ -310,7 +392,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#F8FAFC',
   },
   safeArea: {
     flex: 1,
@@ -324,40 +406,16 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '800',
-    color: '#FFFFFF',
-    marginTop: 2,
+    color: '#0F172A',
+    marginTop: 4,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     color: '#64748B',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
-  roleSwitcher: {
-    flexDirection: 'row',
-    backgroundColor: '#1E293B',
-    borderRadius: 12,
-    padding: 3,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-  },
-  rolePill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  rolePillActive: {
-    backgroundColor: '#10B981',
-  },
-  rolePillText: {
-    fontSize: 12,
     fontWeight: '700',
-    color: '#94A3B8',
-  },
-  rolePillTextActive: {
-    color: '#FFFFFF',
+    textTransform: 'uppercase',
   },
   scrollContent: {
     paddingHorizontal: 24,
@@ -374,11 +432,21 @@ const styles = StyleSheet.create({
   },
   statCard: {
     width: (width - 48 - 12) / 2,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  statCardActive: {
+    borderColor: '#10B981',
+    backgroundColor: '#F0FDF4',
+    shadowOpacity: 0.1,
   },
   statIconContainer: {
     width: 36,
@@ -390,12 +458,12 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontSize: 24,
-    fontWeight: '800',
-    color: '#FFFFFF',
+    fontWeight: '900',
+    color: '#0F172A',
   },
   statLabel: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#64748B',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -407,11 +475,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   seeAllLink: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#10B981',
   },
   farmsCarousel: {
@@ -420,16 +488,16 @@ const styles = StyleSheet.create({
   },
   farmCarouselCard: {
     width: width * 0.76,
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
     shadowRadius: 10,
-    elevation: 4,
+    elevation: 3,
   },
   farmCardTop: {
     flexDirection: 'row',
@@ -439,7 +507,7 @@ const styles = StyleSheet.create({
   farmCardName: {
     fontSize: 17,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   badge: {
     paddingHorizontal: 8,
@@ -447,19 +515,19 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   badgeActive: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: '#F0FDF4',
   },
   badgeInactive: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    backgroundColor: '#FEF2F2',
   },
   badgeText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
     color: '#10B981',
   },
   farmCardDesc: {
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#64748B',
     marginTop: 10,
     lineHeight: 18,
   },
@@ -470,7 +538,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    borderTopColor: '#F1F5F9',
   },
   farmMeta: {
     flexDirection: 'row',
@@ -480,30 +548,35 @@ const styles = StyleSheet.create({
   },
   farmMetaText: {
     fontSize: 12,
-    color: '#94A3B8',
-    fontWeight: '500',
+    color: '#64748B',
+    fontWeight: '600',
   },
   tasksContainer: {
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 16,
     gap: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   taskItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.05)',
+    borderBottomColor: '#F1F5F9',
   },
   taskCheckbox: {
     width: 22,
     height: 22,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#94A3B8',
+    borderColor: '#CBD5E1',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -517,17 +590,17 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   taskName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#0F172A',
   },
   taskCompletedText: {
     textDecorationLine: 'line-through',
-    color: '#64748B',
+    color: '#94A3B8',
   },
   taskMeta: {
     fontSize: 12,
-    color: '#94A3B8',
+    color: '#64748B',
   },
   taskTypeBadge: {
     paddingHorizontal: 8,
@@ -535,18 +608,23 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   taskTypeText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
   },
-  urgenciesContainer: {
+  dynamicContainer: {
     gap: 12,
   },
   urgencyCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   urgencyCardTop: {
     flexDirection: 'row',
@@ -557,13 +635,14 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   urgencySubject: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#0F172A',
   },
   urgencyMeta: {
-    fontSize: 12,
-    color: '#94A3B8',
+    fontSize: 13,
+    color: '#64748B',
+    fontWeight: '500',
   },
   priorityBadge: {
     paddingHorizontal: 8,
@@ -571,58 +650,63 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   priorityHigh: {
-    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    backgroundColor: '#FEF2F2',
   },
   priorityMedium: {
-    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    backgroundColor: '#FFFBEB',
   },
   priorityLow: {
-    backgroundColor: 'rgba(59, 130, 246, 0.15)',
+    backgroundColor: '#EFF6FF',
   },
   priorityText: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
-    color: '#EF4444', // falls back depending on background
   },
   urgencyDescription: {
-    fontSize: 13,
-    color: '#94A3B8',
+    fontSize: 14,
+    color: '#475569',
     marginTop: 10,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   urgencyCardBottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 14,
-    paddingTop: 10,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
+    borderTopColor: '#F1F5F9',
   },
   urgencyDate: {
-    fontSize: 11,
-    color: '#64748B',
+    fontSize: 12,
+    color: '#94A3B8',
+    fontWeight: '500',
   },
   urgencyActionText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     color: '#10B981',
   },
   visioBanner: {
-    backgroundColor: '#1E293B',
-    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: '#E2E8F0',
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   visioIconContainer: {
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    backgroundColor: '#F5F3FF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -631,35 +715,38 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   visioTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#0F172A',
   },
   visioSubtitle: {
-    fontSize: 12,
-    color: '#94A3B8',
+    fontSize: 13,
+    color: '#64748B',
   },
   visioJoinBtn: {
     backgroundColor: '#8B5CF6',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
   },
   visioJoinBtnText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
   },
   emptyContainer: {
-    padding: 24,
+    padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   emptyText: {
-    color: '#94A3B8',
+    color: '#64748B',
     fontSize: 14,
+    fontWeight: '500',
     textAlign: 'center',
   },
 });
