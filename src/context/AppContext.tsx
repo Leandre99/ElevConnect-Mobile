@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { fetchApi } from '../api/client';
 
-// Types
+// Types updated to match Backend Prisma Schema
 export interface Farm {
   id: string;
   nomferme: string;
-  description: string;
-  adresse: string;
+  description?: string;
+  adresse?: string;
   is_active: boolean;
+  userId: string;
 }
 
 export interface Animal {
@@ -15,9 +17,9 @@ export interface Animal {
   race: string;
   age: number; // in months or days
   nombre: number; // >1 = Lot, 1 = Individuel
-  ferme_id: string;
-  date_entree: string;
-  maturation_jours: number;
+  fermeId: string;
+  dateEntree: string;
+  maturationJours: number;
   tags?: string; // ear tag for individual
 }
 
@@ -29,15 +31,17 @@ export interface Task {
   quantite: string;
   type: 'alimentation' | 'vaccin' | 'soin' | 'controle';
   status: 'pending' | 'completed';
-  affichage_date: string;
-  ferme_id: string;
-  age_target: string;
+  affichageDate: string;
+  fermeId: string;
+  ageTarget: string;
 }
 
 export interface Diagnostic {
+  id: string;
+  alertId: string;
   maladie: string;
   traitement: string;
-  veterinaire: string;
+  veterinaireId: string;
   date: string;
 }
 
@@ -48,12 +52,12 @@ export interface Alert {
   status: 'Non traitée' | 'Traitée';
   espece: string;
   race: string;
-  ferme_id: string;
+  fermeId: string;
   date: string;
   media?: string;
-  diagnostic?: Diagnostic;
-  meeting_date?: string;
-  meeting_url?: string;
+  diagnostics?: Diagnostic[];
+  meetingDate?: string;
+  meetingUrl?: string;
 }
 
 export interface Invoice {
@@ -63,301 +67,254 @@ export interface Invoice {
   description: string;
   date: string;
   veterinaire: string;
+  userId: string;
 }
 
 interface AppContextProps {
   userRole: 'breeder' | 'vet';
   setUserRole: (role: 'breeder' | 'vet') => void;
+  isLoading: boolean;
   farms: Farm[];
-  addFarm: (farm: Omit<Farm, 'id' | 'is_active'>) => void;
+  addFarm: (farm: Omit<Farm, 'id' | 'is_active' | 'userId'>) => Promise<void>;
   animals: Animal[];
-  addAnimal: (animal: Omit<Animal, 'id'>) => void;
-  reportMortality: (animalId: string, count: number) => void;
+  addAnimal: (animal: Omit<Animal, 'id'>) => Promise<void>;
+  reportMortality: (animalId: string, count: number) => Promise<void>;
   tasks: Task[];
-  toggleTask: (taskId: string) => void;
+  toggleTask: (taskId: string) => Promise<void>;
   alerts: Alert[];
-  addAlert: (alert: Omit<Alert, 'id' | 'status' | 'date'>) => void;
-  treatAlert: (alertId: string, diagnostic: Diagnostic) => void;
-  scheduleMeeting: (alertId: string, dateStr: string, url: string) => void;
+  addAlert: (alert: Omit<Alert, 'id' | 'status' | 'date'>) => Promise<void>;
+  treatAlert: (alertId: string, diagnostic: Omit<Diagnostic, 'id' | 'alertId'>) => Promise<void>;
+  scheduleMeeting: (alertId: string, dateStr: string, url: string) => Promise<void>;
   invoices: Invoice[];
-  payInvoice: (invoiceId: string) => void;
+  payInvoice: (invoiceId: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
+// For demo purposes, we'll hardcode the User IDs for Breeder and Vet since we don't have a real login session yet.
+// In a real app, this comes from authentication (JWT).
+const DEMO_BREEDER_ID = "replace-me"; // Will be fetched
+const DEMO_VET_ID = "replace-me";     // Will be fetched
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [userRole, setUserRole] = useState<'breeder' | 'vet'>('breeder');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
-  // Mock Farms
-  const [farms, setFarms] = useState<Farm[]>([
-    {
-      id: 'f1',
-      nomferme: 'Ferme GreenValley',
-      description: 'Production mixte lait et aviculture durable.',
-      adresse: 'Zone Agro-Industrielle, Piste 4',
-      is_active: true,
-    },
-    {
-      id: 'f2',
-      nomferme: 'Ranch du Sahel',
-      description: 'Élevage ovin et caprin rustique de prestige.',
-      adresse: 'Route de Louga, km 12',
-      is_active: true,
-    }
-  ]);
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [animals, setAnimals] = useState<Animal[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
 
-  // Mock Animals (Groups & Individuals)
-  const [animals, setAnimals] = useState<Animal[]>([
-    {
-      id: 'a1',
-      espece: 'Volaille',
-      race: 'Pondeuse (Isa Brown)',
-      age: 6, // 6 months
-      nombre: 300, // Lot mode!
-      ferme_id: 'f1',
-      date_entree: '2026-01-10',
-      maturation_jours: 540,
-    },
-    {
-      id: 'a2',
-      espece: 'Bovin',
-      race: 'Goudali',
-      age: 24, // 24 months
-      nombre: 1, // Individual mode
-      ferme_id: 'f1',
-      date_entree: '2024-06-10',
-      maturation_jours: 1095,
-      tags: 'GD-908',
-    },
-    {
-      id: 'a3',
-      espece: 'Ovin',
-      race: 'Ladoum',
-      age: 10,
-      nombre: 1,
-      ferme_id: 'f2',
-      date_entree: '2025-08-15',
-      maturation_jours: 450,
-      tags: 'LD-777',
-    },
-    {
-      id: 'a4',
-      espece: 'Lapin',
-      race: 'Néo-zélandais',
-      age: 2, // 2 months
-      nombre: 45, // Lot
-      ferme_id: 'f1',
-      date_entree: '2026-04-10',
-      maturation_jours: 90,
-    }
-  ]);
+  const [breederId, setBreederId] = useState<string>('');
+  const [vetId, setVetId] = useState<string>('');
 
-  // Mock Tasks based on lifecycle
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 't1',
-      nomtache: 'Nourrissage - Aliment de ponte',
-      espece: 'Volaille',
-      race: 'Pondeuse (Isa Brown)',
-      quantite: '120g / oiseau',
-      type: 'alimentation',
-      status: 'pending',
-      affichage_date: '2026-06-10',
-      ferme_id: 'f1',
-      age_target: '6 mois',
-    },
-    {
-      id: 't2',
-      nomtache: 'Rappel Vaccin Pseudo-peste',
-      espece: 'Volaille',
-      race: 'Pondeuse (Isa Brown)',
-      quantite: '1 dose/sujet',
-      type: 'vaccin',
-      status: 'completed',
-      affichage_date: '2026-06-10',
-      ferme_id: 'f1',
-      age_target: '6 mois',
-    },
-    {
-      id: 't3',
-      nomtache: 'Inspection des mamelles & traite',
-      espece: 'Bovin',
-      race: 'Goudali',
-      quantite: '2 fois / jour',
-      type: 'controle',
-      status: 'pending',
-      affichage_date: '2026-06-10',
-      ferme_id: 'f1',
-      age_target: '24 mois',
-    },
-    {
-      id: 't4',
-      nomtache: 'Pesée mensuelle et vitamines',
-      espece: 'Ovin',
-      race: 'Ladoum',
-      quantite: '10ml',
-      type: 'soin',
-      status: 'pending',
-      affichage_date: '2026-06-10',
-      ferme_id: 'f2',
-      age_target: '10 mois',
-    },
-    {
-      id: 't5',
-      nomtache: 'Nettoyage des clapiers et apport luzerne',
-      espece: 'Lapin',
-      race: 'Néo-zélandais',
-      quantite: '5kg total',
-      type: 'alimentation',
-      status: 'completed',
-      affichage_date: '2026-06-10',
-      ferme_id: 'f1',
-      age_target: '2 mois',
-    }
-  ]);
+  // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        // Fetch all base data in parallel
+        const [usersData, farmsData, animalsData, tasksData, alertsData, diagnosticsData, invoicesData] = await Promise.all([
+          fetchApi('/users'),
+          fetchApi('/fermes'),
+          fetchApi('/animals'),
+          fetchApi('/tasks'),
+          fetchApi('/alerts'),
+          fetchApi('/diagnostics'),
+          fetchApi('/invoices')
+        ]);
 
-  // Mock Alerts
-  const [alerts, setAlerts] = useState<Alert[]>([
-    {
-      id: 'al1',
-      description: 'Léthargie générale et baisse soudaine de la ponte dans le lot.',
-      priority: 'high',
-      status: 'Non traitée',
-      espece: 'Volaille',
-      race: 'Pondeuse (Isa Brown)',
-      ferme_id: 'f1',
-      date: '2026-06-09',
-    },
-    {
-      id: 'al2',
-      description: 'Léger boitement patte arrière gauche.',
-      priority: 'medium',
-      status: 'Traitée',
-      espece: 'Ovin',
-      race: 'Ladoum',
-      ferme_id: 'f2',
-      date: '2026-06-05',
-      diagnostic: {
-        maladie: 'Piétin modéré',
-        traitement: 'Bain de sabot au sulfate de zinc + pommade antibiotique pendant 5 jours.',
-        veterinaire: 'Dr. Diallo',
-        date: '2026-06-06',
+        // Setup demo users
+        const breeder = usersData.find((u: any) => u.role === 'breeder');
+        const vet = usersData.find((u: any) => u.role === 'vet');
+        if (breeder) setBreederId(breeder.id);
+        if (vet) setVetId(vet.id);
+
+        setFarms(farmsData);
+        setAnimals(animalsData);
+        setTasks(tasksData);
+        setInvoices(invoicesData);
+
+        // Map diagnostics to alerts
+        const alertsWithDiag = alertsData.map((alert: Alert) => {
+          return {
+            ...alert,
+            diagnostics: diagnosticsData.filter((d: Diagnostic) => d.alertId === alert.id)
+          };
+        });
+        // Sort alerts by latest first
+        alertsWithDiag.sort((a: Alert, b: Alert) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        
+        setAlerts(alertsWithDiag);
+      } catch (error) {
+        console.error('Failed to fetch data from backend:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  ]);
-
-  // Mock Invoices
-  const [invoices, setInvoices] = useState<Invoice[]>([
-    {
-      id: 'i1',
-      amount: 15000, // CFA or unit currency
-      status: 'unpaid',
-      description: 'Consultation à distance et prescription Piétin - Ovin LD-777',
-      date: '2026-06-06',
-      veterinaire: 'Dr. Diallo',
-    },
-    {
-      id: 'i2',
-      amount: 25000,
-      status: 'paid',
-      description: 'Visite médicale de routine bovins de GreenValley',
-      date: '2026-05-20',
-      veterinaire: 'Dr. Diallo',
-    }
-  ]);
-
-  // Actions
-  const addFarm = (farm: Omit<Farm, 'id' | 'is_active'>) => {
-    const newFarm: Farm = {
-      ...farm,
-      id: `f${farms.length + 1}`,
-      is_active: true,
     };
-    setFarms([...farms, newFarm]);
+
+    fetchData();
+  }, []);
+
+  // Actions mapped to Backend
+  const addFarm = async (farm: Omit<Farm, 'id' | 'is_active' | 'userId'>) => {
+    try {
+      const newFarm = await fetchApi('/fermes', {
+        method: 'POST',
+        body: JSON.stringify({ ...farm, userId: breederId }),
+      });
+      setFarms(prev => [...prev, newFarm]);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const addAnimal = (animal: Omit<Animal, 'id'>) => {
-    const newAnimal: Animal = {
-      ...animal,
-      id: `a${animals.length + 1}`,
-    };
-    setAnimals([...animals, newAnimal]);
+  const addAnimal = async (animal: Omit<Animal, 'id'>) => {
+    try {
+      const newAnimal = await fetchApi('/animals', {
+        method: 'POST',
+        body: JSON.stringify(animal),
+      });
+      setAnimals(prev => [...prev, newAnimal]);
 
-    // Automatically generate first task template for this new animal
-    const newTask: Task = {
-      id: `t${tasks.length + 1}`,
-      nomtache: `Contrôle d'accueil & acclimatation`,
-      espece: animal.espece,
-      race: animal.race,
-      quantite: 'N/A',
-      type: 'controle',
-      status: 'pending',
-      affichage_date: new Date().toISOString().split('T')[0],
-      ferme_id: animal.ferme_id,
-      age_target: `${animal.age} mois`,
-    };
-    setTasks(prev => [newTask, ...prev]);
-  };
-
-  const reportMortality = (animalId: string, count: number) => {
-    setAnimals(prev =>
-      prev
-        .map(ani => {
-          if (ani.id === animalId) {
-            const newNombre = Math.max(0, ani.nombre - count);
-            return { ...ani, nombre: newNombre };
-          }
-          return ani;
+      // Automatically generate first task template for this new animal
+      const newTask = await fetchApi('/tasks', {
+        method: 'POST',
+        body: JSON.stringify({
+          nomtache: `Contrôle d'accueil & acclimatation`,
+          espece: animal.espece,
+          race: animal.race,
+          quantite: 'N/A',
+          type: 'controle',
+          status: 'pending',
+          affichageDate: new Date().toISOString().split('T')[0],
+          fermeId: animal.fermeId,
+          ageTarget: `${animal.age} mois`,
         })
-        .filter(ani => ani.nombre > 0) // Remove if lot drops to 0
-    );
+      });
+      setTasks(prev => [newTask, ...prev]);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const toggleTask = (taskId: string) => {
-    setTasks(prev =>
-      prev.map(t => (t.id === taskId ? { ...t, status: t.status === 'pending' ? 'completed' : 'pending' } : t))
-    );
+  const reportMortality = async (animalId: string, count: number) => {
+    try {
+      const animal = animals.find(a => a.id === animalId);
+      if (!animal) return;
+
+      const newNombre = Math.max(0, animal.nombre - count);
+      
+      if (newNombre === 0) {
+        await fetchApi(`/animals/${animalId}`, { method: 'DELETE' });
+        setAnimals(prev => prev.filter(a => a.id !== animalId));
+      } else {
+        const updated = await fetchApi(`/animals/${animalId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ nombre: newNombre })
+        });
+        setAnimals(prev => prev.map(a => a.id === animalId ? updated : a));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const addAlert = (alert: Omit<Alert, 'id' | 'status' | 'date'>) => {
-    const newAlert: Alert = {
-      ...alert,
-      id: `al${alerts.length + 1}`,
-      status: 'Non traitée',
-      date: new Date().toISOString().split('T')[0],
-    };
-    setAlerts([newAlert, ...alerts]);
+  const toggleTask = async (taskId: string) => {
+    try {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+      const newStatus = task.status === 'pending' ? 'completed' : 'pending';
+      const updated = await fetchApi(`/tasks/${taskId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus })
+      });
+      setTasks(prev => prev.map(t => t.id === taskId ? updated : t));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const treatAlert = (alertId: string, diagnostic: Diagnostic) => {
-    const targetAlert = alerts.find(a => a.id === alertId);
-    const espece = targetAlert?.espece || 'Inconnu';
-    const race = targetAlert?.race || 'Inconnu';
-
-    setAlerts(prev =>
-      prev.map(al => (al.id === alertId ? { ...al, status: 'Traitée', diagnostic } : al))
-    );
-
-    // Automatically create a new invoice for this veterinary treatment
-    const newInvoice: Invoice = {
-      id: `i${invoices.length + 1}`,
-      amount: Math.floor(Math.random() * 20000) + 10000, // random price between 10k and 30k
-      status: 'unpaid',
-      description: `Traitement pour : ${diagnostic.maladie} (${espece} ${race})`,
-      date: new Date().toISOString().split('T')[0],
-      veterinaire: diagnostic.veterinaire,
-    };
-    setInvoices(prev => [newInvoice, ...prev]);
+  const addAlert = async (alert: Omit<Alert, 'id' | 'status' | 'date'>) => {
+    try {
+      const newAlert = await fetchApi('/alerts', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...alert,
+          status: 'Non traitée',
+          date: new Date().toISOString().split('T')[0],
+        })
+      });
+      setAlerts(prev => [newAlert, ...prev]);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const scheduleMeeting = (alertId: string, dateStr: string, url: string) => {
-    setAlerts(prev =>
-      prev.map(al => (al.id === alertId ? { ...al, meeting_date: dateStr, meeting_url: url } : al))
-    );
+  const treatAlert = async (alertId: string, diagnosticData: Omit<Diagnostic, 'id' | 'alertId'>) => {
+    try {
+      const targetAlert = alerts.find(a => a.id === alertId);
+      if (!targetAlert) return;
+
+      // Create Diagnostic
+      const diagnostic = await fetchApi('/diagnostics', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...diagnosticData,
+          alertId: alertId,
+        })
+      });
+
+      // Update Alert Status
+      const updatedAlert = await fetchApi(`/alerts/${alertId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'Traitée' })
+      });
+
+      setAlerts(prev => prev.map(al => al.id === alertId ? { ...updatedAlert, diagnostics: [diagnostic] } : al));
+
+      // Create Invoice
+      const newInvoice = await fetchApi('/invoices', {
+        method: 'POST',
+        body: JSON.stringify({
+          amount: Math.floor(Math.random() * 20000) + 10000,
+          status: 'unpaid',
+          description: `Traitement pour : ${diagnostic.maladie} (${targetAlert.espece} ${targetAlert.race})`,
+          date: new Date().toISOString().split('T')[0],
+          veterinaire: 'Dr. Diallo',
+          userId: breederId,
+        })
+      });
+      setInvoices(prev => [newInvoice, ...prev]);
+
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const payInvoice = (invoiceId: string) => {
-    setInvoices(prev => prev.map(inv => (inv.id === invoiceId ? { ...inv, status: 'paid' } : inv)));
+  const scheduleMeeting = async (alertId: string, dateStr: string, url: string) => {
+    try {
+      const updatedAlert = await fetchApi(`/alerts/${alertId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ meetingDate: dateStr, meetingUrl: url })
+      });
+      setAlerts(prev => prev.map(al => al.id === alertId ? { ...al, meetingDate: updatedAlert.meetingDate, meetingUrl: updatedAlert.meetingUrl } : al));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const payInvoice = async (invoiceId: string) => {
+    try {
+      const updated = await fetchApi(`/invoices/${invoiceId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'paid' })
+      });
+      setInvoices(prev => prev.map(inv => inv.id === invoiceId ? updated : inv));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -365,6 +322,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       value={{
         userRole,
         setUserRole,
+        isLoading,
         farms,
         addFarm,
         animals,
